@@ -30,7 +30,7 @@ node Campaign {
     has budget_usdc: float = 0.0;
     has timeline_days: int = 14;
     has target_audience: list = [];
-    has content_type: str = "";
+    has content_type: list = [];
     has campaign_brief: str = "";
     has min_kol_score: int = 65;
     has status: str = "onboarding";
@@ -161,7 +161,7 @@ sv {
         budget_usdc: float,
         timeline_days: int,
         target_audience: list,
-        content_type: str,
+        content_type: list,
         campaign_brief: str,
         min_kol_score: int = 65,
         mode: str = "web3"
@@ -410,36 +410,6 @@ cl {
         async can with entry {
             is_authed = await jacIsLoggedIn();
             ready = True;
-            # #region agent log
-            setTimeout(lambda -> None {
-                bs = window.getComputedStyle(document.body);
-                tb = document.querySelector(".topbar");
-                ct = document.querySelector(".content");
-                h1el = document.querySelector(".topbar-left h1");
-                pel = document.querySelector(".topbar-left p");
-                tb_s = "none";
-                h1_s = "none";
-                p_s = "none";
-                ct_t = 0;
-                tb_h = 0;
-                tb_b = 0;
-                if (tb) {
-                    tb_h = tb.offsetHeight;
-                    tb_b = tb.getBoundingClientRect().bottom;
-                    tb_s = window.getComputedStyle(tb).padding;
-                }
-                if (ct) {
-                    ct_t = ct.getBoundingClientRect().top;
-                }
-                if (h1el) {
-                    h1_s = window.getComputedStyle(h1el).margin;
-                }
-                if (pel) {
-                    p_s = window.getComputedStyle(pel).margin;
-                }
-                fetch("http://127.0.0.1:7242/ingest/e31488d5-7723-4d02-978f-319d2733ddbc", {"method": "POST", "headers": {"Content-Type": "application/json"}, "body": JSON.stringify({"location": "main.jac:app:entry", "message": "layout-debug", "hypothesisId": "H1-H5", "runId": "run1", "timestamp": Date.now(), "data": {"bodyMargin": bs.margin, "bodyPadding": bs.padding, "topbarHeight": tb_h, "topbarBottom": tb_b, "topbarPadding": tb_s, "contentTop": ct_t, "h1Margin": h1_s, "pMargin": p_s}})});
-            }, 2000);
-            # #endregion agent log
         }
 
         async def submit_auth() -> None {

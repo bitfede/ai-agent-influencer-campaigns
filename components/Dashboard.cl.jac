@@ -8,7 +8,7 @@ def:pub Dashboard(on_logout: any, on_load_demo: any, on_launch: any) -> JsxEleme
     has form_budget: str = "25000";
     has form_timeline: str = "14";
     has form_brief: str = "Drive Dogecoin community growth and awareness. KOLs should highlight DOGE utility beyond memes — tipping, payments, DeFi integrations on Dogechain. Meme-friendly tone encouraged.";
-    has form_content_type: str = "Twitter Threads";
+    has form_content_type: list = ["Twitter/X Threads", "Twitter/X Spaces"];
     has form_min_score: str = "65";
     has form_mode: str = "web3";
     has form_audience: list = ["Base Ecosystem", "DeFi Users", "AI Enthusiasts"];
@@ -95,6 +95,74 @@ def:pub Dashboard(on_logout: any, on_load_demo: any, on_launch: any) -> JsxEleme
                     }
                 }}
             >{tag}</div>
+        );
+    }
+
+    # ── pre-compute content type platform list ──
+    available_platforms: list = [
+        "Twitter/X Threads",
+        "Twitter/X Spaces",
+        "YouTube Videos",
+        "YouTube Shorts",
+        "Instagram Reels",
+        "Instagram Posts",
+        "TikTok",
+        "LinkedIn Posts",
+        "Twitch Streams",
+        "Podcast Mentions",
+        "Blog Articles",
+        "Telegram Posts"
+    ];
+
+    # ── build content type tag elements ──
+    content_tag_elements: list = [];
+    for ptag in available_platforms {
+        ptag_selected = False;
+        for sel in form_content_type {
+            if (sel == ptag) {
+                ptag_selected = True;
+                break;
+            }
+        }
+        ptag_bg = "rgba(168,85,247,0.05)";
+        ptag_border_color = "rgba(168,85,247,0.15)";
+        ptag_cls = "tag";
+        if (ptag_selected) {
+            ptag_bg = "rgba(168,85,247,0.2)";
+            ptag_border_color = "rgba(168,85,247,0.4)";
+            ptag_cls = "tag selected";
+        }
+        captured_ptag = ptag;
+        content_tag_elements.append(
+            <div
+                className={ptag_cls}
+                style={{
+                    "background": ptag_bg,
+                    "borderColor": ptag_border_color,
+                    "cursor": "pointer",
+                    "color": "#A855F7"
+                }}
+                onClick={lambda t=captured_ptag -> None {
+                    found = False;
+                    for c in form_content_type {
+                        if (c == t) {
+                            found = True;
+                            break;
+                        }
+                    }
+                    if (found) {
+                        new_ct: list = [];
+                        for c in form_content_type {
+                            if (c != t) {
+                                new_ct.append(c);
+                            }
+                        }
+                        form_content_type = new_ct;
+                    } else {
+                        form_content_type = form_content_type + [t];
+                    }
+                }}
+            >{ptag}</div>
         );
     }
 
@@ -815,15 +883,14 @@ def:pub Dashboard(on_logout: any, on_load_demo: any, on_launch: any) -> JsxEleme
                                 </div>
                             </div>
                             <div className="form-row">
-                                <div className="form-group">
-                                    <label className="form-label">Content Type</label>
-                                    <select className="form-select" value={form_content_type} onChange={lambda e -> None { form_content_type = e.target.value; }}>
-                                        <option value="Twitter Threads">Twitter Threads</option>
-                                        <option value="Short Videos">Short Videos</option>
-                                        <option value="Twitter + Video">Twitter + Video</option>
-                                        <option value="UGC Only">UGC Only</option>
-                                    </select>
+                                <div className="form-group full">
+                                    <label className="form-label">Content Platforms (select multiple)</label>
+                                    <div className="tags-row">
+                                        {content_tag_elements}
+                                    </div>
                                 </div>
+                            </div>
+                            <div className="form-row">
                                 <div className="form-group">
                                     <label className="form-label">Min KOL Score</label>
                                     <select className="form-select" value={form_min_score} onChange={lambda e -> None { form_min_score = e.target.value; }}>
