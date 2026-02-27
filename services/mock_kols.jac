@@ -1,11 +1,15 @@
 """Mock KOL dataset for CampaignMind MVP demo.
 
-20 crypto KOL profiles distributed across quality tiers:
+WEB3_KOLS: 20 crypto KOL profiles distributed across quality tiers:
   5 excellent (85-100), 5 good (70-84), 4 borderline (60-70),
   4 bad (<65), 2 hard-disqualified (rug_promotions >= 1).
+
+WEB2_KOLS: 15 traditional influencer profiles across quality tiers:
+  5 excellent (85-100), 5 good (70-84), 3 borderline (60-70),
+  2 bad / hard-disqualified.
 """
 
-glob ALL_KOLS: list = [
+glob WEB3_KOLS: list = [
     # ─── EXCELLENT (will score 85-100) ─────────────────────
     {
         "handle": "@based_builder",
@@ -357,17 +361,318 @@ glob ALL_KOLS: list = [
     }
 ];
 
-"""Return all KOL candidates, optionally filtered by categories."""
-def:pub get_candidates(filters: dict = {}) -> list {
+glob WEB2_KOLS: list = [
+    # ——— EXCELLENT (will score 85-100) ———
+    {
+        "handle": "@productivity_pro",
+        "followers": 175000,
+        "engagement_rate": 7.2,
+        "account_age_days": 1400,
+        "categories": ["Tech", "Business"],
+        "brand_safety": "clean",
+        "ftc_compliance": 0.95,
+        "platforms": ["YouTube", "LinkedIn"],
+        "content_style": "educational",
+        "estimated_price_usd": 4800,
+        "payment_email": "prodpro@creator.com",
+        "comment_quality": "high",
+        "recent_posts": [
+            "Deep dive: How I automated my entire workflow with 5 tools",
+            "Honest review of the new Notion AI features — what works and what doesn't",
+            "Tutorial: Build a second brain system that actually sticks"
+        ]
+    },
+    {
+        "handle": "@lifestyle_lea",
+        "followers": 320000,
+        "engagement_rate": 6.8,
+        "account_age_days": 1200,
+        "categories": ["Lifestyle", "Tech"],
+        "brand_safety": "clean",
+        "ftc_compliance": 0.92,
+        "platforms": ["Instagram", "Twitter"],
+        "content_style": "lifestyle",
+        "estimated_price_usd": 5500,
+        "payment_email": "lea@lifestyle.co",
+        "comment_quality": "high",
+        "recent_posts": [
+            "My morning routine as a remote founder — tools I actually use",
+            "Switching to a minimalist desk setup changed my productivity",
+            "#ad Tried this new planner app for 30 days — full transparency review"
+        ]
+    },
+    {
+        "handle": "@saas_breakdown",
+        "followers": 92000,
+        "engagement_rate": 8.1,
+        "account_age_days": 980,
+        "categories": ["Tech", "Business"],
+        "brand_safety": "clean",
+        "ftc_compliance": 0.90,
+        "platforms": ["YouTube", "Twitter"],
+        "content_style": "review",
+        "estimated_price_usd": 3200,
+        "payment_email": "reviews@saasbreakdown.io",
+        "comment_quality": "high",
+        "recent_posts": [
+            "I tested every project management tool so you don't have to",
+            "SaaS pricing breakdown: why most tools overcharge for AI features",
+            "Video: 7 underrated tools for startup teams under 10 people"
+        ]
+    },
+    {
+        "handle": "@fit_science",
+        "followers": 280000,
+        "engagement_rate": 6.5,
+        "account_age_days": 1600,
+        "categories": ["Fitness", "Lifestyle"],
+        "brand_safety": "clean",
+        "ftc_compliance": 0.86,
+        "platforms": ["Instagram", "TikTok"],
+        "content_style": "educational",
+        "estimated_price_usd": 4200,
+        "payment_email": "collab@fitscience.me",
+        "comment_quality": "high",
+        "recent_posts": [
+            "The science behind why morning workouts boost focus — real studies",
+            "Tested 5 recovery tools with HRV tracking — here's what worked",
+            "Reel: 3 exercises every desk worker needs (backed by research)"
+        ]
+    },
+    {
+        "handle": "@nomad_eats",
+        "followers": 410000,
+        "engagement_rate": 5.9,
+        "account_age_days": 1350,
+        "categories": ["Food", "Lifestyle"],
+        "brand_safety": "clean",
+        "ftc_compliance": 0.91,
+        "platforms": ["Instagram", "YouTube"],
+        "content_style": "entertainment",
+        "estimated_price_usd": 6000,
+        "payment_email": "hello@nomadeats.co",
+        "comment_quality": "high",
+        "recent_posts": [
+            "Street food tour: Miami's hidden gems that locals don't share",
+            "Cooking challenge: recreating a $200 meal for under $20",
+            "#sponsored Tried this meal kit service for a month in 3 countries"
+        ]
+    },
+
+    # ——— GOOD (will score 70-84) ———
+    {
+        "handle": "@startup_lea",
+        "followers": 140000,
+        "engagement_rate": 5.4,
+        "account_age_days": 900,
+        "categories": ["Business", "Tech"],
+        "brand_safety": "clean",
+        "ftc_compliance": 0.94,
+        "platforms": ["LinkedIn", "Twitter"],
+        "content_style": "educational",
+        "estimated_price_usd": 3500,
+        "payment_email": "lea@startupinsights.co",
+        "comment_quality": "medium",
+        "recent_posts": [
+            "Lessons from scaling my startup from 0 to 50K users in 6 months",
+            "The tools I recommend to every early-stage founder",
+            "LinkedIn post: Why most SaaS onboarding flows are broken"
+        ]
+    },
+    {
+        "handle": "@indie_gamer_hub",
+        "followers": 210000,
+        "engagement_rate": 5.8,
+        "account_age_days": 800,
+        "categories": ["Gaming", "Tech"],
+        "brand_safety": "clean",
+        "ftc_compliance": 0.78,
+        "platforms": ["YouTube", "Twitch"],
+        "content_style": "entertainment",
+        "estimated_price_usd": 3800,
+        "payment_email": "biz@indiegamerhub.gg",
+        "comment_quality": "medium",
+        "recent_posts": [
+            "Reviewing 10 indie games you've never heard of — all bangers",
+            "My streaming setup tour and what I'd change after 2 years",
+            "Live: playing community picks for 8 hours straight"
+        ]
+    },
+    {
+        "handle": "@remote_work_hub",
+        "followers": 55000,
+        "engagement_rate": 6.0,
+        "account_age_days": 650,
+        "categories": ["Business", "Lifestyle"],
+        "brand_safety": "clean",
+        "ftc_compliance": 0.88,
+        "platforms": ["Twitter", "LinkedIn"],
+        "content_style": "educational",
+        "estimated_price_usd": 1800,
+        "payment_email": "hello@remoteworkhub.com",
+        "comment_quality": "medium",
+        "recent_posts": [
+            "My favorite async communication tools for distributed teams",
+            "Thread: how to run effective meetings with a global team",
+            "The remote work tech stack I recommend to every new manager"
+        ]
+    },
+    {
+        "handle": "@glam_by_nina",
+        "followers": 520000,
+        "engagement_rate": 4.8,
+        "account_age_days": 1100,
+        "categories": ["Beauty", "Lifestyle"],
+        "brand_safety": "clean",
+        "ftc_compliance": 0.89,
+        "platforms": ["TikTok", "Instagram"],
+        "content_style": "entertainment",
+        "estimated_price_usd": 7000,
+        "payment_email": "mgmt@glambynina.com",
+        "comment_quality": "medium",
+        "recent_posts": [
+            "Get ready with me: using only drugstore products under $15",
+            "Honest brand review: I tried their full line for 2 weeks",
+            "Tutorial: 5-minute office look that actually works"
+        ]
+    },
+    {
+        "handle": "@home_workout_daily",
+        "followers": 120000,
+        "engagement_rate": 5.5,
+        "account_age_days": 700,
+        "categories": ["Fitness", "Lifestyle"],
+        "brand_safety": "clean",
+        "ftc_compliance": 0.80,
+        "platforms": ["Instagram", "TikTok"],
+        "content_style": "educational",
+        "estimated_price_usd": 2200,
+        "payment_email": "partner@homeworkoutdaily.fit",
+        "comment_quality": "medium",
+        "recent_posts": [
+            "No-equipment full body workout you can do in 20 minutes",
+            "I tracked my progress for 90 days with just bodyweight — results",
+            "Reel: The one stretch most people skip (and shouldn't)"
+        ]
+    },
+
+    # ——— BORDERLINE (will score 60-70) ———
+    {
+        "handle": "@minimal_living",
+        "followers": 180000,
+        "engagement_rate": 3.6,
+        "account_age_days": 450,
+        "categories": ["Lifestyle"],
+        "brand_safety": "clean",
+        "ftc_compliance": 0.85,
+        "platforms": ["Instagram"],
+        "content_style": "lifestyle",
+        "estimated_price_usd": 2800,
+        "payment_email": "collab@minimalliving.me",
+        "comment_quality": "medium",
+        "recent_posts": [
+            "Decluttered my entire apartment — here's what I kept",
+            "The 10-item wardrobe experiment: month 3 update",
+            "Aesthetic morning routine — slow living in Miami"
+        ]
+    },
+    {
+        "handle": "@retro_plays",
+        "followers": 68000,
+        "engagement_rate": 4.0,
+        "account_age_days": 380,
+        "categories": ["Gaming"],
+        "brand_safety": "minor_issues",
+        "ftc_compliance": 0.65,
+        "platforms": ["YouTube", "Twitch"],
+        "content_style": "entertainment",
+        "estimated_price_usd": 1200,
+        "payment_email": "retro@plays.gg",
+        "comment_quality": "low",
+        "recent_posts": [
+            "Playing every N64 game ever made — day 47",
+            "This game was WAY ahead of its time and nobody talks about it",
+            "Stream highlight: rage quit compilation (viewers loved it)"
+        ]
+    },
+    {
+        "handle": "@kitchen_experiments",
+        "followers": 75000,
+        "engagement_rate": 3.8,
+        "account_age_days": 320,
+        "categories": ["Food", "Lifestyle"],
+        "brand_safety": "minor_issues",
+        "ftc_compliance": 0.70,
+        "platforms": ["Instagram", "TikTok"],
+        "content_style": "entertainment",
+        "estimated_price_usd": 1000,
+        "payment_email": "chef@kitchenexp.com",
+        "comment_quality": "low",
+        "recent_posts": [
+            "Can I make a 5-star meal with only gas station ingredients?",
+            "Taste-testing every hot sauce at the store — ranked",
+            "I let my followers pick my meals for a week (regrets)"
+        ]
+    },
+
+    # ——— BAD / HARD DISQUALIFIED ———
+    {
+        "handle": "@controversy_king",
+        "followers": 290000,
+        "engagement_rate": 2.1,
+        "account_age_days": 600,
+        "categories": ["Lifestyle", "Business"],
+        "brand_safety": "controversial",
+        "ftc_compliance": 0.10,
+        "platforms": ["Twitter", "YouTube"],
+        "content_style": "entertainment",
+        "estimated_price_usd": 4000,
+        "payment_email": "king@controversy.lol",
+        "comment_quality": "low",
+        "recent_posts": [
+            "Hot take that got me cancelled (I stand by it)",
+            "Brand deal gone wrong — exposing the company that scammed me",
+            "Reacting to my haters — they're not wrong but they're not right"
+        ]
+    },
+    {
+        "handle": "@bot_network",
+        "followers": 450000,
+        "engagement_rate": 0.3,
+        "account_age_days": 200,
+        "categories": ["Lifestyle", "Tech"],
+        "brand_safety": "clean",
+        "ftc_compliance": 0.05,
+        "platforms": ["Instagram"],
+        "content_style": "lifestyle",
+        "estimated_price_usd": 3000,
+        "payment_email": "contact@totallyreal.com",
+        "comment_quality": "low",
+        "recent_posts": [
+            "Amazing day! #blessed #lifestyle #inspo #follow4follow",
+            "So grateful for all my followers! (identical comment pattern x500)",
+            "New post! Link in bio! #ad #sponsored #collab"
+        ]
+    }
+];
+
+"""Return KOL candidates from web3 or web2 pool, optionally filtered by categories."""
+def:pub get_candidates(filters: dict = {}, mode: str = "web3") -> list {
+    pool: list = [];
+    if (mode == "web2") {
+        pool = WEB2_KOLS;
+    } else {
+        pool = WEB3_KOLS;
+    }
     if (not filters) {
-        return ALL_KOLS;
+        return pool;
     }
     filter_cats = filters.get("categories", []);
     if (not filter_cats) {
-        return ALL_KOLS;
+        return pool;
     }
     result: list = [];
-    for kol in ALL_KOLS {
+    for kol in pool {
         for cat in kol["categories"] {
             if (cat in filter_cats) {
                 result.append(kol);
