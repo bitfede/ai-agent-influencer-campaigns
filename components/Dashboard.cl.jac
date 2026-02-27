@@ -2,7 +2,102 @@
 
 cl import from .Button { Button }
 
-def:pub Dashboard(private_message: str, on_logout: any) -> JsxElement {
+def:pub Dashboard(on_logout: any, on_load_demo: any, on_launch: any) -> JsxElement {
+    has form_brand: str = "MoltX Protocol";
+    has form_goal: str = "Product Launch";
+    has form_budget: str = "15000";
+    has form_timeline: str = "14";
+    has form_brief: str = "Launch MoltX agent staking feature. KOLs must cover Base ecosystem. Emphasize autonomous AI agent capabilities.";
+    has form_content_type: str = "Twitter Threads";
+    has form_min_score: str = "65";
+    has form_mode: str = "web3";
+    has form_audience: list = ["Base Ecosystem", "DeFi Users", "AI Enthusiasts"];
+
+    # ── pre-compute mode toggle styles ──
+    web3_btn_bg = "transparent";
+    web3_btn_border = "1px solid rgba(255,255,255,0.07)";
+    web3_btn_color = "#5A6A7A";
+    web2_btn_bg = "transparent";
+    web2_btn_border = "1px solid rgba(255,255,255,0.07)";
+    web2_btn_color = "#5A6A7A";
+    if (form_mode == "web3") {
+        web3_btn_bg = "rgba(0,229,160,0.1)";
+        web3_btn_border = "1px solid rgba(0,229,160,0.4)";
+        web3_btn_color = "#00E5A0";
+    } else {
+        web2_btn_bg = "rgba(168,85,247,0.1)";
+        web2_btn_border = "1px solid rgba(168,85,247,0.4)";
+        web2_btn_color = "#A855F7";
+    }
+
+    # ── pre-compute wallet card text ──
+    wallet_balance = "$47,200";
+    wallet_addr = "0x4f2a...c91b · Base";
+    if (form_mode == "web2") {
+        wallet_balance = "Connected";
+        wallet_addr = "Stripe · Active";
+    }
+
+    # ── pre-compute audience tag list ──
+    available_tags: list = [];
+    if (form_mode == "web3") {
+        available_tags = ["Base Ecosystem", "DeFi Users", "AI Enthusiasts", "NFT Community", "Traders"];
+    } else {
+        available_tags = ["Tech Enthusiasts", "Productivity", "Gaming", "Business", "Lifestyle", "Fitness"];
+    }
+
+    # ── build audience tag elements ──
+    audience_tag_elements: list = [];
+    for tag in available_tags {
+        tag_selected = False;
+        for sel in form_audience {
+            if (sel == tag) {
+                tag_selected = True;
+                break;
+            }
+        }
+        tag_bg = "rgba(0,102,255,0.05)";
+        tag_border_color = "rgba(0,102,255,0.15)";
+        tag_cls = "tag";
+        if (tag_selected) {
+            tag_bg = "rgba(0,102,255,0.2)";
+            tag_border_color = "rgba(0,102,255,0.4)";
+            tag_cls = "tag selected";
+        }
+        # capture tag value
+        captured_tag = tag;
+        audience_tag_elements.append(
+            <div
+                className={tag_cls}
+                style={{
+                    "background": tag_bg,
+                    "borderColor": tag_border_color,
+                    "cursor": "pointer"
+                }}
+                onClick={lambda t=captured_tag -> None {
+                    found = False;
+                    for a in form_audience {
+                        if (a == t) {
+                            found = True;
+                            break;
+                        }
+                    }
+                    if (found) {
+                        new_aud: list = [];
+                        for a in form_audience {
+                            if (a != t) {
+                                new_aud.append(a);
+                            }
+                        }
+                        form_audience = new_aud;
+                    } else {
+                        form_audience = form_audience + [t];
+                    }
+                }}
+            >{tag}</div>
+        );
+    }
+
     return <div className="cm-root">
         <style>{"""
             :root {
@@ -281,7 +376,6 @@ def:pub Dashboard(private_message: str, on_logout: any) -> JsxElement {
                 line-height: 1.6;
                 margin-bottom: 28px;
             }
-            .hero-actions { display: flex; align-items: center; gap: 12px; }
             .btn-primary {
                 display: flex;
                 align-items: center;
@@ -319,58 +413,6 @@ def:pub Dashboard(private_message: str, on_logout: any) -> JsxElement {
                 transition: all 0.2s;
             }
             .btn-secondary:hover { border-color: rgba(255,255,255,0.2); background: var(--surface2); }
-            .stats-row {
-                display: grid;
-                grid-template-columns: repeat(4, 1fr);
-                gap: 16px;
-                margin-bottom: 28px;
-            }
-            .stat-card {
-                background: var(--surface);
-                border: 1px solid var(--border);
-                border-radius: 12px;
-                padding: 20px;
-                position: relative;
-                overflow: hidden;
-                transition: border-color 0.2s;
-            }
-            .stat-card:hover { border-color: rgba(255,255,255,0.15); }
-            .stat-card::after {
-                content: "";
-                position: absolute;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                height: 2px;
-            }
-            .stat-card.green::after { background: linear-gradient(90deg, var(--accent), transparent); }
-            .stat-card.blue::after { background: linear-gradient(90deg, var(--accent2), transparent); }
-            .stat-card.red::after { background: linear-gradient(90deg, var(--accent3), transparent); }
-            .stat-card.yellow::after { background: linear-gradient(90deg, var(--warn), transparent); }
-            .stat-label {
-                font-family: "DM Mono", monospace;
-                font-size: 10px;
-                color: var(--muted);
-                letter-spacing: 1.5px;
-                text-transform: uppercase;
-                margin-bottom: 10px;
-            }
-            .stat-value {
-                font-size: 28px;
-                font-weight: 800;
-                letter-spacing: -1px;
-                line-height: 1;
-                margin-bottom: 6px;
-            }
-            .stat-card.green .stat-value { color: var(--accent); }
-            .stat-card.blue .stat-value { color: var(--accent2); }
-            .stat-card.red .stat-value { color: var(--accent3); }
-            .stat-card.yellow .stat-value { color: var(--warn); }
-            .stat-change {
-                font-size: 11px;
-                color: var(--muted);
-                font-family: "DM Mono", monospace;
-            }
             .two-col {
                 display: grid;
                 grid-template-columns: 1fr 380px;
@@ -560,79 +602,6 @@ def:pub Dashboard(private_message: str, on_logout: any) -> JsxElement {
                 white-space: nowrap;
                 margin-top: 2px;
             }
-            .table-card {
-                background: var(--surface);
-                border: 1px solid var(--border);
-                border-radius: 14px;
-                overflow: hidden;
-            }
-            table { width: 100%; border-collapse: collapse; }
-            thead th {
-                font-family: "DM Mono", monospace;
-                font-size: 10px;
-                color: var(--muted);
-                letter-spacing: 1.5px;
-                text-transform: uppercase;
-                padding: 14px 20px;
-                text-align: left;
-                border-bottom: 1px solid var(--border);
-                background: var(--surface2);
-            }
-            tbody tr {
-                border-bottom: 1px solid var(--border);
-                transition: background 0.15s;
-                cursor: pointer;
-            }
-            tbody tr:last-child { border-bottom: none; }
-            tbody tr:hover { background: rgba(255,255,255,0.02); }
-            td { padding: 16px 20px; font-size: 13px; }
-            .campaign-name { font-weight: 600; }
-            .campaign-brand {
-                font-size: 11px;
-                color: var(--muted);
-                font-family: "DM Mono", monospace;
-                margin-top: 2px;
-            }
-            .badge {
-                display: inline-flex;
-                align-items: center;
-                gap: 5px;
-                font-family: "DM Mono", monospace;
-                font-size: 10px;
-                font-weight: 500;
-                padding: 4px 10px;
-                border-radius: 6px;
-                white-space: nowrap;
-            }
-            .badge-dot { width: 5px; height: 5px; border-radius: 50%; }
-            .badge.running { background: rgba(0,229,160,0.1); color: var(--accent); }
-            .badge.running .badge-dot { background: var(--accent); }
-            .badge.pending { background: rgba(255,184,0,0.1); color: var(--warn); }
-            .badge.pending .badge-dot { background: var(--warn); }
-            .badge.done { background: rgba(90,106,122,0.15); color: var(--muted); }
-            .badge.done .badge-dot { background: var(--muted); }
-            .progress-bar {
-                width: 100px;
-                height: 4px;
-                background: var(--surface2);
-                border-radius: 4px;
-                overflow: hidden;
-            }
-            .progress-fill {
-                height: 100%;
-                background: var(--accent);
-                border-radius: 4px;
-                transition: width 0.3s;
-            }
-            .progress-fill.blue { background: var(--accent2); }
-            .progress-fill.muted { background: var(--muted); }
-            .amount {
-                font-family: "DM Mono", monospace;
-                font-size: 12px;
-                font-weight: 500;
-            }
-            .amount.green { color: var(--accent); }
-            .amount.muted { color: var(--muted); }
             .fade-in { animation: fadeIn 0.4s ease forwards; opacity: 0; }
             @keyframes fadeIn {
                 from { opacity: 0; transform: translateY(8px); }
@@ -644,7 +613,6 @@ def:pub Dashboard(private_message: str, on_logout: any) -> JsxElement {
             .fade-in:nth-child(4) { animation-delay: 0.2s; }
             .fade-in:nth-child(5) { animation-delay: 0.25s; }
             @media (max-width: 1100px) {
-                .stats-row { grid-template-columns: repeat(2, 1fr); }
                 .two-col { grid-template-columns: 1fr; }
             }
             @media (max-width: 860px) {
@@ -662,7 +630,6 @@ def:pub Dashboard(private_message: str, on_logout: any) -> JsxElement {
             @media (max-width: 640px) {
                 .topbar { padding: 16px; flex-direction: column; align-items: flex-start; gap: 12px; }
                 .content { padding: 20px 16px; }
-                .stats-row { grid-template-columns: 1fr; }
                 .hero-title { font-size: 24px; }
             }
         """}</style>
@@ -677,40 +644,12 @@ def:pub Dashboard(private_message: str, on_logout: any) -> JsxElement {
                     <span className="nav-icon">⚡</span>
                     Dashboard
                 </div>
-                <div className="nav-item">
-                    <span className="nav-icon">📡</span>
-                    Campaigns
-                    <span className="nav-badge">3</span>
-                </div>
-                <div className="nav-item">
-                    <span className="nav-icon">🔍</span>
-                    KOL Discovery
-                </div>
-                <div className="nav-item">
-                    <span className="nav-icon">✅</span>
-                    Vetting Queue
-                    <span className="nav-badge">7</span>
-                </div>
-                <div className="nav-label">Finance</div>
-                <div className="nav-item">
-                    <span className="nav-icon">💸</span>
-                    Payments
-                </div>
-                <div className="nav-item">
-                    <span className="nav-icon">🔗</span>
-                    On-Chain Log
-                </div>
-                <div className="nav-label">Settings</div>
-                <div className="nav-item">
-                    <span className="nav-icon">⚙️</span>
-                    Agent Config
-                </div>
             </nav>
             <div className="sidebar-bottom">
                 <div className="wallet-card">
                     <div className="wallet-label">Agent Wallet</div>
-                    <div className="wallet-balance">$47,200</div>
-                    <div className="wallet-addr">0x4f2a...c91b · Base</div>
+                    <div className="wallet-balance">{wallet_balance}</div>
+                    <div className="wallet-addr">{wallet_addr}</div>
                 </div>
             </div>
         </aside>
@@ -737,32 +676,50 @@ def:pub Dashboard(private_message: str, on_logout: any) -> JsxElement {
                         Deposit budget, define your goals, and let the agent handle everything —
                         KOL discovery, vetting, outreach, verification, and USDC payments.
                     </p>
-                    <div className="hero-actions">
-                        <button className="btn-primary">🚀 Start New Campaign</button>
-                        <button className="btn-secondary">📄 View Templates</button>
-                    </div>
                 </div>
-                <div className="stats-row">
-                    <div className="stat-card green fade-in">
-                        <div className="stat-label">USDC Distributed</div>
-                        <div className="stat-value">$128K</div>
-                        <div className="stat-change">+$14,200 this week</div>
-                    </div>
-                    <div className="stat-card blue fade-in">
-                        <div className="stat-label">KOLs Vetted</div>
-                        <div className="stat-value">847</div>
-                        <div className="stat-change">312 approved · 535 rejected</div>
-                    </div>
-                    <div className="stat-card red fade-in">
-                        <div className="stat-label">Rugs Avoided</div>
-                        <div className="stat-value">63</div>
-                        <div className="stat-change">$89K saved in bad hires</div>
-                    </div>
-                    <div className="stat-card yellow fade-in">
-                        <div className="stat-label">Active Campaigns</div>
-                        <div className="stat-value">3</div>
-                        <div className="stat-change">2 in execution · 1 pending</div>
-                    </div>
+                <div style={{
+                    "display": "flex",
+                    "gap": "12px",
+                    "marginBottom": "24px",
+                    "position": "relative",
+                    "zIndex": "1"
+                }}>
+                    <button
+                        style={{
+                            "display": "flex",
+                            "alignItems": "center",
+                            "gap": "8px",
+                            "background": "rgba(0,229,160,0.08)",
+                            "border": "1px solid rgba(0,229,160,0.25)",
+                            "borderRadius": "10px",
+                            "padding": "14px 24px",
+                            "color": "#00E5A0",
+                            "fontFamily": "'Syne', sans-serif",
+                            "fontSize": "14px",
+                            "fontWeight": "700",
+                            "cursor": "pointer",
+                            "transition": "all 0.2s"
+                        }}
+                        onClick={lambda -> None { on_load_demo("demo-moltx-001"); }}
+                    >▶ Demo: MoltX Campaign (Web3)</button>
+                    <button
+                        style={{
+                            "display": "flex",
+                            "alignItems": "center",
+                            "gap": "8px",
+                            "background": "rgba(168,85,247,0.08)",
+                            "border": "1px solid rgba(168,85,247,0.25)",
+                            "borderRadius": "10px",
+                            "padding": "14px 24px",
+                            "color": "#A855F7",
+                            "fontFamily": "'Syne', sans-serif",
+                            "fontSize": "14px",
+                            "fontWeight": "700",
+                            "cursor": "pointer",
+                            "transition": "all 0.2s"
+                        }}
+                        onClick={lambda -> None { on_load_demo("demo-saas-001"); }}
+                    >▶ Demo: Notion Campaign (Web2)</button>
                 </div>
                 <div className="two-col">
                     <div className="form-card fade-in">
@@ -771,18 +728,54 @@ def:pub Dashboard(private_message: str, on_logout: any) -> JsxElement {
                             <div className="card-tag">Step 1 of 3</div>
                         </div>
                         <div className="form-body">
+                            <div style={{
+                                "display": "flex",
+                                "gap": "8px",
+                                "marginBottom": "18px"
+                            }}>
+                                <button
+                                    style={{
+                                        "padding": "8px 20px",
+                                        "borderRadius": "8px",
+                                        "fontSize": "13px",
+                                        "fontWeight": "600",
+                                        "fontFamily": "'Syne', sans-serif",
+                                        "cursor": "pointer",
+                                        "transition": "all 0.15s",
+                                        "background": web3_btn_bg,
+                                        "border": web3_btn_border,
+                                        "color": web3_btn_color
+                                    }}
+                                    onClick={lambda -> None { form_mode = "web3"; form_audience = ["Base Ecosystem", "DeFi Users", "AI Enthusiasts"]; }}
+                                >⬡ Web3</button>
+                                <button
+                                    style={{
+                                        "padding": "8px 20px",
+                                        "borderRadius": "8px",
+                                        "fontSize": "13px",
+                                        "fontWeight": "600",
+                                        "fontFamily": "'Syne', sans-serif",
+                                        "cursor": "pointer",
+                                        "transition": "all 0.15s",
+                                        "background": web2_btn_bg,
+                                        "border": web2_btn_border,
+                                        "color": web2_btn_color
+                                    }}
+                                    onClick={lambda -> None { form_mode = "web2"; form_audience = ["Tech Enthusiasts", "Productivity", "Lifestyle"]; }}
+                                >◈ Web2</button>
+                            </div>
                             <div className="form-row">
                                 <div className="form-group">
                                     <label className="form-label">Brand / Project</label>
-                                    <input className="form-input" type="text" value="MoltX Protocol" />
+                                    <input className="form-input" type="text" value={form_brand} onChange={lambda e -> None { form_brand = e.target.value; }} />
                                 </div>
                                 <div className="form-group">
                                     <label className="form-label">Campaign Goal</label>
-                                    <select className="form-select">
-                                        <option>Product Launch</option>
-                                        <option>Community Growth</option>
-                                        <option>Brand Awareness</option>
-                                        <option>Token TGE</option>
+                                    <select className="form-select" value={form_goal} onChange={lambda e -> None { form_goal = e.target.value; }}>
+                                        <option value="Product Launch">Product Launch</option>
+                                        <option value="Community Growth">Community Growth</option>
+                                        <option value="Brand Awareness">Brand Awareness</option>
+                                        <option value="Token TGE">Token TGE</option>
                                     </select>
                                 </div>
                             </div>
@@ -791,16 +784,15 @@ def:pub Dashboard(private_message: str, on_logout: any) -> JsxElement {
                                     <label className="form-label">Budget (USDC)</label>
                                     <div className="budget-row">
                                         <span className="budget-currency">USDC</span>
-                                        <input className="budget-input" type="text" value="15,000" />
+                                        <input className="budget-input" type="text" value={form_budget} onChange={lambda e -> None { form_budget = e.target.value; }} />
                                     </div>
                                 </div>
                                 <div className="form-group">
                                     <label className="form-label">Timeline</label>
-                                    <select className="form-select">
-                                        <option>14 days</option>
-                                        <option>7 days</option>
-                                        <option>30 days</option>
-                                        <option>Custom</option>
+                                    <select className="form-select" value={form_timeline} onChange={lambda e -> None { form_timeline = e.target.value; }}>
+                                        <option value="14">14 days</option>
+                                        <option value="7">7 days</option>
+                                        <option value="30">30 days</option>
                                     </select>
                                 </div>
                             </div>
@@ -808,163 +800,82 @@ def:pub Dashboard(private_message: str, on_logout: any) -> JsxElement {
                                 <div className="form-group full">
                                     <label className="form-label">Target Audience</label>
                                     <div className="tags-row">
-                                        <div className="tag selected">Base Ecosystem <span className="tag-x">×</span></div>
-                                        <div className="tag selected">DeFi Users <span className="tag-x">×</span></div>
-                                        <div className="tag selected">AI Enthusiasts <span className="tag-x">×</span></div>
-                                        <div className="tag">+ Add</div>
+                                        {audience_tag_elements}
                                     </div>
                                 </div>
                             </div>
                             <div className="form-row">
                                 <div className="form-group full">
                                     <label className="form-label">Campaign Brief</label>
-                                    <textarea className="form-textarea">
-                                        Launching MoltX agent staking feature. KOLs must cover Base ecosystem.
-                                        No competing AI agent protocols.
-                                    </textarea>
+                                    <textarea className="form-textarea" value={form_brief} onChange={lambda e -> None { form_brief = e.target.value; }}></textarea>
                                 </div>
                             </div>
                             <div className="form-row">
                                 <div className="form-group">
                                     <label className="form-label">Content Type</label>
-                                    <select className="form-select">
-                                        <option>Twitter Threads</option>
-                                        <option>Short Videos</option>
-                                        <option>Twitter + Video</option>
-                                        <option>UGC Only</option>
+                                    <select className="form-select" value={form_content_type} onChange={lambda e -> None { form_content_type = e.target.value; }}>
+                                        <option value="Twitter Threads">Twitter Threads</option>
+                                        <option value="Short Videos">Short Videos</option>
+                                        <option value="Twitter + Video">Twitter + Video</option>
+                                        <option value="UGC Only">UGC Only</option>
                                     </select>
                                 </div>
                                 <div className="form-group">
                                     <label className="form-label">Min KOL Score</label>
-                                    <select className="form-select">
-                                        <option>65 / 100 (Recommended)</option>
-                                        <option>75 / 100 (Strict)</option>
-                                        <option>50 / 100 (Lenient)</option>
+                                    <select className="form-select" value={form_min_score} onChange={lambda e -> None { form_min_score = e.target.value; }}>
+                                        <option value="65">65 / 100 (Recommended)</option>
+                                        <option value="75">75 / 100 (Strict)</option>
+                                        <option value="50">50 / 100 (Lenient)</option>
                                     </select>
                                 </div>
                             </div>
                         </div>
                         <div className="form-footer">
                             <div className="form-note">Agent will discover & vet KOLs via Influur</div>
-                            <button className="btn-primary">Continue →</button>
+                            <button className="btn-primary" onClick={lambda -> None {
+                                on_launch({
+                                    "brand_name": form_brand,
+                                    "goal": form_goal,
+                                    "budget_usdc": float(form_budget),
+                                    "timeline_days": int(form_timeline),
+                                    "target_audience": form_audience,
+                                    "content_type": form_content_type,
+                                    "campaign_brief": form_brief,
+                                    "min_kol_score": int(form_min_score),
+                                    "mode": form_mode
+                                });
+                            }}>🚀 Launch Campaign →</button>
                         </div>
                     </div>
                     <div className="activity-card fade-in">
                         <div className="card-header">
-                            <div className="card-title">Agent Activity</div>
+                            <div className="card-title">Agent Status</div>
                             <div className="card-tag">Live</div>
                         </div>
                         <div className="activity-list">
                             <div className="activity-item">
-                                <div className="activity-icon green">💸</div>
+                                <div className="activity-icon green">🤖</div>
                                 <div className="activity-text">
-                                    <div className="activity-title">Payment Released</div>
-                                    <div className="activity-desc">$6,000 USDC → @cryptoKOL_A<br />Content verified ✓</div>
+                                    <div className="activity-title">Agent Online</div>
+                                    <div className="activity-desc">Ready to launch campaigns.<br />AI vetting + proposal engine active.</div>
                                 </div>
-                                <div className="activity-time">2m ago</div>
                             </div>
                             <div className="activity-item">
-                                <div className="activity-icon blue">✅</div>
+                                <div className="activity-icon blue">📡</div>
                                 <div className="activity-text">
-                                    <div className="activity-title">Content Approved</div>
-                                    <div className="activity-desc">@defi_maven post verified<br />Brief match: 94%</div>
+                                    <div className="activity-title">Influur Database</div>
+                                    <div className="activity-desc">20 Web3 KOLs · 15 Web2 KOLs<br />Connected and indexed.</div>
                                 </div>
-                                <div className="activity-time">18m ago</div>
                             </div>
                             <div className="activity-item">
-                                <div className="activity-icon red">⛔</div>
+                                <div className="activity-icon green">⚡</div>
                                 <div className="activity-text">
-                                    <div className="activity-title">KOL Rejected</div>
-                                    <div className="activity-desc">@pump_king scored 28/100<br />Reason: 2 rug promotions</div>
+                                    <div className="activity-title">Quick Start</div>
+                                    <div className="activity-desc">Click a demo button above to see<br />a pre-built campaign, or fill the form.</div>
                                 </div>
-                                <div className="activity-time">34m ago</div>
-                            </div>
-                            <div className="activity-item">
-                                <div className="activity-icon yellow">📨</div>
-                                <div className="activity-text">
-                                    <div className="activity-title">Outreach Sent</div>
-                                    <div className="activity-desc">7 personalized DMs sent<br />Awaiting KOL responses</div>
-                                </div>
-                                <div className="activity-time">1h ago</div>
-                            </div>
-                            <div className="activity-item">
-                                <div className="activity-icon green">🔍</div>
-                                <div className="activity-text">
-                                    <div className="activity-title">Discovery Complete</div>
-                                    <div className="activity-desc">31 candidates found via Influur<br />9 approved · 22 rejected</div>
-                                </div>
-                                <div className="activity-time">2h ago</div>
-                            </div>
-                            <div className="activity-item">
-                                <div className="activity-icon blue">💰</div>
-                                <div className="activity-text">
-                                    <div className="activity-title">Budget Deposited</div>
-                                    <div className="activity-desc">$15,000 USDC locked in escrow<br />Tx: 0x9c1b...44fa</div>
-                                </div>
-                                <div className="activity-time">2h ago</div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div className="table-card fade-in">
-                    <div className="card-header">
-                        <div className="card-title">Active Campaigns</div>
-                        <button className="btn-secondary" style={{"padding": "8px 16px", "fontSize": "12px"}}>View All →</button>
-                    </div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Campaign</th>
-                                <th>Status</th>
-                                <th>KOLs</th>
-                                <th>Progress</th>
-                                <th>Budget</th>
-                                <th>Distributed</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <div className="campaign-name">Agent Staking Launch</div>
-                                    <div className="campaign-brand">MoltX Protocol</div>
-                                </td>
-                                <td><span className="badge running"><span className="badge-dot"></span>Running</span></td>
-                                <td>9 / 9</td>
-                                <td><div className="progress-bar"><div className="progress-fill" style={{"width": "65%"}}></div></div></td>
-                                <td><span className="amount muted">$15,000</span></td>
-                                <td><span className="amount green">$9,750</span></td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div className="campaign-name">Community Growth Q1</div>
-                                    <div className="campaign-brand">Avantis Protocol</div>
-                                </td>
-                                <td><span className="badge pending"><span className="badge-dot"></span>Pending Approval</span></td>
-                                <td>12 / 12</td>
-                                <td><div className="progress-bar"><div className="progress-fill blue" style={{"width": "20%"}}></div></div></td>
-                                <td><span className="amount muted">$22,000</span></td>
-                                <td><span className="amount green">$0</span></td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div className="campaign-name">TGE Awareness Push</div>
-                                    <div className="campaign-brand">Base Ecosystem Fund</div>
-                                </td>
-                                <td><span className="badge done"><span className="badge-dot"></span>Complete</span></td>
-                                <td>6 / 6</td>
-                                <td><div className="progress-bar"><div className="progress-fill muted" style={{"width": "100%"}}></div></div></td>
-                                <td><span className="amount muted">$10,200</span></td>
-                                <td><span className="amount green">$10,200</span></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div style={{
-                    "marginTop": "24px",
-                    "fontSize": "12px",
-                    "color": "var(--muted)"
-                }}>
-                    {private_message}
                 </div>
             </div>
         </main>
