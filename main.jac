@@ -3,6 +3,9 @@
 cl import from "@jac/runtime" { jacLogin, jacSignup, jacLogout, jacIsLoggedIn }
 cl import from .components.Dashboard { Dashboard }
 cl import from .components.Login { LoginForm }
+cl import from .components.ProposalView { ProposalView }
+cl import from .components.AgentRunning { AgentRunning }
+cl import from .components.LiveDashboard { LiveDashboard }
 
 import from services.agent {
     build_intelligence_profile,
@@ -95,7 +98,7 @@ sv {
 
     # ——— Startup: Load demo campaigns ———
     def _ensure_demos() {
-        if (not campaigns.get("demo-moltx-001")) {
+        if (not campaigns.get("demo-doge-001")) {
             demos = get_demo_campaigns();
             for k in demos {
                 campaigns[k] = demos[k];
@@ -380,6 +383,7 @@ sv {
 
 cl {
     def:pub app() -> JsxElement {
+        # ——— Auth state ———
         has email: str = "";
         has password: str = "";
         has is_loading: bool = False;
@@ -387,6 +391,15 @@ cl {
         has mode: str = "login";
         has is_authed: bool = False;
         has ready: bool = False;
+
+        # ——— View state ———
+        has current_view: str = "dashboard";
+        has current_campaign_id: str = "";
+        has current_campaign: dict = {};
+        has activity_log: list = [];
+        has campaign_mode: str = "web3";
+
+        # ——— Auth helpers ———
 
         def clear_error() -> None {
             if (error != "") {
@@ -397,6 +410,36 @@ cl {
         async can with entry {
             is_authed = await jacIsLoggedIn();
             ready = True;
+            # #region agent log
+            setTimeout(lambda -> None {
+                bs = window.getComputedStyle(document.body);
+                tb = document.querySelector(".topbar");
+                ct = document.querySelector(".content");
+                h1el = document.querySelector(".topbar-left h1");
+                pel = document.querySelector(".topbar-left p");
+                tb_s = "none";
+                h1_s = "none";
+                p_s = "none";
+                ct_t = 0;
+                tb_h = 0;
+                tb_b = 0;
+                if (tb) {
+                    tb_h = tb.offsetHeight;
+                    tb_b = tb.getBoundingClientRect().bottom;
+                    tb_s = window.getComputedStyle(tb).padding;
+                }
+                if (ct) {
+                    ct_t = ct.getBoundingClientRect().top;
+                }
+                if (h1el) {
+                    h1_s = window.getComputedStyle(h1el).margin;
+                }
+                if (pel) {
+                    p_s = window.getComputedStyle(pel).margin;
+                }
+                fetch("http://127.0.0.1:7242/ingest/e31488d5-7723-4d02-978f-319d2733ddbc", {"method": "POST", "headers": {"Content-Type": "application/json"}, "body": JSON.stringify({"location": "main.jac:app:entry", "message": "layout-debug", "hypothesisId": "H1-H5", "runId": "run1", "timestamp": Date.now(), "data": {"bodyMargin": bs.margin, "bodyPadding": bs.padding, "topbarHeight": tb_h, "topbarBottom": tb_b, "topbarPadding": tb_s, "contentTop": ct_t, "h1Margin": h1_s, "pMargin": p_s}})});
+            }, 2000);
+            # #endregion agent log
         }
 
         async def submit_auth() -> None {
@@ -425,7 +468,75 @@ cl {
         async def logout() -> None {
             await jacLogout();
             is_authed = False;
+            current_view = "dashboard";
+            current_campaign_id = "";
+            current_campaign = {};
         }
+
+        # ——— Campaign actions ———
+
+        async def load_demo(demo_id: str) -> None {
+            current_campaign = await get_campaign(demo_id);
+            current_campaign_id = demo_id;
+            campaign_mode = current_campaign["mode"] or "web3";
+            activity_log = current_campaign["activity_log"] or [];
+            current_view = "proposal";
+        }
+
+        async def launch_campaign(form_data: dict) -> None {
+            fd_mode = form_data["mode"] or "web3";
+            fd_min = form_data["min_kol_score"] or 65;
+            result = await create_campaign(
+                brand_name=form_data["brand_name"],
+                goal=form_data["goal"],
+                budget_usdc=form_data["budget_usdc"],
+                timeline_days=form_data["timeline_days"],
+                target_audience=form_data["target_audience"],
+                content_type=form_data["content_type"],
+                campaign_brief=form_data["campaign_brief"],
+                min_kol_score=fd_min,
+                mode=fd_mode
+            );
+            current_campaign_id = result["campaign_id"];
+            campaign_mode = fd_mode;
+            current_view = "running";
+            # Start pipeline
+            await run_pipeline(current_campaign_id);
+            # Refresh campaign data
+            current_campaign = await get_campaign(current_campaign_id);
+            activity_log = current_campaign["activity_log"] or [];
+            # Auto-advance to proposal if ready
+            if (current_campaign["status"] == "proposal_ready") {
+                current_view = "proposal";
+            }
+        }
+
+        async def handle_approve() -> None {
+            await approve_campaign(current_campaign_id);
+            current_campaign = await get_campaign(current_campaign_id);
+            activity_log = current_campaign["activity_log"] or [];
+            current_view = "live";
+        }
+
+        async def handle_verify(kol_handle: str, content_url: str) -> None {
+            await verify_kol_content(current_campaign_id, kol_handle, content_url);
+            current_campaign = await get_campaign(current_campaign_id);
+            activity_log = current_campaign["activity_log"] or [];
+        }
+
+        async def handle_pay(kol_handle: str) -> None {
+            await pay_kol(current_campaign_id, kol_handle);
+            current_campaign = await get_campaign(current_campaign_id);
+            activity_log = current_campaign["activity_log"] or [];
+        }
+
+        def go_to_dashboard() -> None {
+            current_view = "dashboard";
+            current_campaign_id = "";
+            current_campaign = {};
+        }
+
+        # ——— Render ———
 
         if (not ready) {
             return <div style={{
@@ -433,10 +544,11 @@ cl {
                 "display": "flex",
                 "alignItems": "center",
                 "justifyContent": "center",
-                "fontFamily": "Arial, sans-serif"
+                "background": "#080C10",
+                "color": "#E8EDF2"
             }}>
-                <p>Loading...</p>
-        </div>;
+                <p>Loading CampaignMind...</p>
+            </div>;
         }
 
         if (not is_authed) {
@@ -460,10 +572,38 @@ cl {
             />;
         }
 
+        # ——— Authenticated views ———
+
+        if (current_view == "running") {
+            return <AgentRunning
+                campaign={current_campaign}
+                activity_log={activity_log}
+                on_proposal_ready={lambda -> None { current_view = "proposal"; }}
+            />;
+        }
+
+        if (current_view == "proposal") {
+            return <ProposalView
+                campaign={current_campaign}
+                on_approve={handle_approve}
+                on_back={go_to_dashboard}
+            />;
+        }
+
+        if (current_view == "live") {
+            return <LiveDashboard
+                campaign={current_campaign}
+                activity_log={activity_log}
+                on_verify={handle_verify}
+                on_pay={handle_pay}
+            />;
+        }
+
+        # Default: Dashboard
         return <Dashboard
             on_logout={logout}
-            on_load_demo={lambda cid: str -> None { }}
-            on_launch={lambda data: dict -> None { }}
+            on_load_demo={load_demo}
+            on_launch={launch_campaign}
         />;
     }
 }

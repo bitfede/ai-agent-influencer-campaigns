@@ -10,22 +10,22 @@ def:pub ProposalView(
     has show_rejected: bool = False;
 
     # ── extract campaign fields ──
-    brand_name = campaign.get("brand_name", "Campaign");
-    goal = campaign.get("goal", "");
-    budget = campaign.get("budget_usdc", 0);
-    mode = campaign.get("mode", "web3");
-    timeline_days = campaign.get("timeline_days", 14);
-    approved_kols = campaign.get("approved_kols", []);
-    rejected_kols = campaign.get("rejected_kols", []);
-    proposal = campaign.get("proposal", {});
+    brand_name = campaign["brand_name"] or "Campaign";
+    goal = campaign["goal"] or "";
+    budget = campaign["budget_usdc"] or 0;
+    mode = campaign["mode"] or "web3";
+    timeline_days = campaign["timeline_days"] or 14;
+    approved_kols = campaign["approved_kols"] or [];
+    rejected_kols = campaign["rejected_kols"] or [];
+    proposal = campaign["proposal"] or {};
 
-    kol_roster = proposal.get("kol_roster", []);
-    timeline = proposal.get("timeline", []);
-    summary = proposal.get("campaign_summary", "No summary available.");
-    recommendation = proposal.get("agent_recommendation", "");
-    total_reach = proposal.get("total_expected_reach", 0);
-    total_approved = proposal.get("total_approved", len(approved_kols));
-    total_rejected_count = proposal.get("total_rejected", len(rejected_kols));
+    kol_roster = proposal["kol_roster"] or [];
+    timeline = proposal["timeline"] or [];
+    summary = proposal["campaign_summary"] or "No summary available.";
+    recommendation = proposal["agent_recommendation"] or "";
+    total_reach = proposal["total_expected_reach"] or 0;
+    total_approved = proposal["total_approved"] or len(approved_kols);
+    total_rejected_count = proposal["total_rejected"] or len(rejected_kols);
 
     # ── budget amounts ──
     t1_amount = budget * 0.4;
@@ -78,13 +78,15 @@ def:pub ProposalView(
     roster_rows: list = [];
     for entry in kol_roster {
         kol_score = 0;
+        entry_handle = entry["handle"] or "";
         for ak in approved_kols {
-            if (ak.get("handle") == entry.get("handle")) {
-                kol_score = ak.get("score", 0);
+            ak_handle = ak["handle"] or "";
+            if (ak_handle == entry_handle) {
+                kol_score = ak["score"] or 0;
                 break;
             }
         }
-        t = entry.get("tier", "tier_3");
+        t = entry["tier"] or "tier_3";
         # tier color
         tc = "#5A6A7A";
         if (t == "tier_1") { tc = "#FFB800"; }
@@ -104,17 +106,19 @@ def:pub ProposalView(
             sfg = "#0066FF";
         }
         # reach format
-        er = entry.get("expected_reach", 0);
+        er = entry["expected_reach"] or 0;
         er_str = str(er);
         if (er >= 1000000) {
             er_str = str(er / 1000000) + "M";
         } elif (er >= 1000) {
             er_str = str(er / 1000) + "k";
         }
-        budget_str = "$" + str(entry.get("budget_usdc", 0));
+        entry_budget = entry["budget_usdc"] or 0;
+        budget_str = "$" + str(entry_budget);
+        entry_role = entry["role"] or "Campaign contributor";
         roster_rows.append(
             <tr style={{"borderLeft": "3px solid " + tc}}>
-                <td style={{"fontWeight": "700"}}>{entry.get("handle", "")}</td>
+                <td style={{"fontWeight": "700"}}>{entry_handle}</td>
                 <td>
                     <span style={{
                         "background": sbg,
@@ -138,7 +142,7 @@ def:pub ProposalView(
                     }}>{tl}</span>
                 </td>
                 <td style={{"color": "#8A95A3", "fontSize": "12px"}}>
-                    {entry.get("role", "Campaign contributor")}
+                    {entry_role}
                 </td>
                 <td style={{
                     "fontFamily": "DM Mono, monospace",
@@ -158,11 +162,14 @@ def:pub ProposalView(
     # ── build rejected rows ──
     rejected_rows: list = [];
     for rk in rejected_kols {
-        rk_score_str = str(rk.get("score", 0)) + "/100";
+        rk_handle = rk["handle"] or "";
+        rk_score = rk["score"] or 0;
+        rk_reason = rk["rejection_reason"] or "Below threshold";
+        rk_score_str = str(rk_score) + "/100";
         rejected_rows.append(
             <div className="pv-rejected-item">
                 <div className="pv-rejected-handle">
-                    {rk.get("handle", "")}
+                    {rk_handle}
                     <span style={{
                         "fontFamily": "DM Mono, monospace",
                         "fontSize": "10px",
@@ -171,7 +178,7 @@ def:pub ProposalView(
                     }}>{rk_score_str}</span>
                 </div>
                 <div className="pv-rejected-reason">
-                    {rk.get("rejection_reason", "Below threshold")}
+                    {rk_reason}
                 </div>
             </div>
         );
@@ -185,7 +192,9 @@ def:pub ProposalView(
         if (idx % 2 != 0) {
             dot_color = "#0066FF";
         }
-        day_label = "Day " + str(entry.get("day", ""));
+        entry_day = entry["day"] or "";
+        entry_action = entry["action"] or "";
+        day_label = "Day " + str(entry_day);
         timeline_rows.append(
             <div className="pv-timeline-item">
                 <div style={{"position": "relative"}}>
@@ -193,7 +202,7 @@ def:pub ProposalView(
                     <div className="pv-timeline-line"></div>
                 </div>
                 <div className="pv-timeline-day">{day_label}</div>
-                <div className="pv-timeline-action">{entry.get("action", "")}</div>
+                <div className="pv-timeline-action">{entry_action}</div>
             </div>
         );
         idx = idx + 1;

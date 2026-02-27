@@ -3,11 +3,11 @@
 cl import from .Button { Button }
 
 def:pub Dashboard(on_logout: any, on_load_demo: any, on_launch: any) -> JsxElement {
-    has form_brand: str = "MoltX Protocol";
-    has form_goal: str = "Product Launch";
-    has form_budget: str = "15000";
+    has form_brand: str = "Dogecoin";
+    has form_goal: str = "Community Growth";
+    has form_budget: str = "25000";
     has form_timeline: str = "14";
-    has form_brief: str = "Launch MoltX agent staking feature. KOLs must cover Base ecosystem. Emphasize autonomous AI agent capabilities.";
+    has form_brief: str = "Drive Dogecoin community growth and awareness. KOLs should highlight DOGE utility beyond memes — tipping, payments, DeFi integrations on Dogechain. Meme-friendly tone encouraged.";
     has form_content_type: str = "Twitter Threads";
     has form_min_score: str = "65";
     has form_mode: str = "web3";
@@ -632,6 +632,10 @@ def:pub Dashboard(on_logout: any, on_load_demo: any, on_launch: any) -> JsxEleme
                 .content { padding: 20px 16px; }
                 .hero-title { font-size: 24px; }
             }
+            /* Fix: reset body margin + h1/p default margins (H1+H2+H3) */
+            body { margin: 0; padding: 0; }
+            .topbar-left h1 { margin: 0; }
+            .topbar-left p { margin: 2px 0 0 0; }
         """}</style>
         <aside className="sidebar">
             <div className="logo">
@@ -700,8 +704,8 @@ def:pub Dashboard(on_logout: any, on_load_demo: any, on_launch: any) -> JsxEleme
                             "cursor": "pointer",
                             "transition": "all 0.2s"
                         }}
-                        onClick={lambda -> None { on_load_demo("demo-moltx-001"); }}
-                    >▶ Demo: MoltX Campaign (Web3)</button>
+                        onClick={lambda -> None { on_load_demo("demo-doge-001"); }}
+                    >▶ Demo: Dogecoin Campaign (Web3)</button>
                     <button
                         style={{
                             "display": "flex",

@@ -2,84 +2,84 @@
 These campaigns are already at proposal_ready status with full data."""
 
 glob DEMO_WEB3_CAMPAIGN: dict = {
-    "id": "demo-moltx-001",
+    "id": "demo-doge-001",
     "mode": "web3",
-    "brand_name": "MoltX Protocol",
-    "goal": "Product Launch",
-    "budget_usdc": 15000,
+    "brand_name": "Dogecoin",
+    "goal": "Community Growth",
+    "budget_usdc": 25000,
     "timeline_days": 14,
     "status": "proposal_ready",
-    "target_audience": ["Base Ecosystem", "AI Enthusiasts", "DeFi Users"],
+    "target_audience": ["Meme Community", "Crypto Traders", "DeFi Users"],
     "content_type": "Twitter Threads",
-    "campaign_brief": "Launch MoltX agent staking feature. KOLs must cover Base ecosystem. Emphasize autonomous AI agent capabilities and the future of agent-to-agent commerce.",
+    "campaign_brief": "Drive Dogecoin community growth and awareness ahead of the DOGE ecosystem expansion. KOLs should highlight Dogecoin utility beyond memes — tipping, payments, DeFi integrations on Dogechain. Meme-friendly tone encouraged but must include real use cases.",
     "min_kol_score": 65,
     "created_at": "2026-02-27T10:00:00Z",
     "intelligence_profile": {
-        "ecosystem_focus": ["Base", "AI Agents", "DeFi"],
+        "ecosystem_focus": ["Dogecoin", "Meme Coins", "DeFi"],
         "min_engagement_rate": 4.0,
         "ideal_follower_min": 50000,
         "ideal_follower_max": 500000,
-        "categories": ["Base", "AI", "DeFi"],
-        "campaign_narrative": "MoltX is launching agent staking, the first feature allowing AI agents to stake tokens and earn yield autonomously. This campaign targets the intersection of AI and DeFi builders on Base.",
+        "categories": ["Base", "AI", "DeFi", "Trading"],
+        "campaign_narrative": "Dogecoin is expanding beyond memes into real DeFi utility with Dogechain integrations and merchant payments. This campaign targets the intersection of meme culture and serious crypto adoption, reaching both retail traders and DeFi power users.",
         "budget_breakdown": {"tier_1_pct": 0.4, "tier_2_pct": 0.4, "tier_3_pct": 0.2},
         "hard_disqualifiers": ["Any rug promotion history", "Account under 6 months", "Bot-driven engagement"]
     },
     "approved_kols": [
-        {"handle": "@based_builder", "followers": 187000, "engagement_rate": 8.4, "score": 91, "verdict": "approved", "tier": "tier_1", "payment_amount_usdc": 6000, "payment_status": "unpaid", "wallet_address": "0x4f2a8B3c91D7eF06A42b1C9dE5f8A3e71c2B09aD", "content_url": "", "tx_hash": "", "outreach_message": "", "verification_verdict": "", "verification_score": 0, "rejection_reason": "", "score_breakdown": {"engagement_authenticity": 28, "reputation_trust": 24, "audience_fit": 23, "content_quality": 16}, "key_strengths": ["Top-tier Base ecosystem coverage", "Consistently high engagement with quality discussion"], "key_risks": ["Premium pricing", "May be overbooked with campaign requests"]},
-        {"handle": "@defi_maven", "followers": 224000, "engagement_rate": 7.9, "score": 84, "verdict": "approved", "tier": "tier_2", "payment_amount_usdc": 2500, "payment_status": "unpaid", "wallet_address": "0x7aE1c3D9f5B24680eA31d8C7bF09e4A62dF8c11B", "content_url": "", "tx_hash": "", "outreach_message": "", "verification_verdict": "", "verification_score": 0, "rejection_reason": "", "score_breakdown": {"engagement_authenticity": 26, "reputation_trust": 22, "audience_fit": 22, "content_quality": 14}, "key_strengths": ["Strong DeFi audience overlap", "Transparent paid disclosure history"], "key_risks": ["High follower count may dilute niche targeting", "Competes with multiple brand deals"]},
-        {"handle": "@ai_agent_alpha", "followers": 156000, "engagement_rate": 9.1, "score": 79, "verdict": "approved", "tier": "tier_2", "payment_amount_usdc": 2000, "payment_status": "unpaid", "wallet_address": "0xB3d7F2a9c8E14D6b5A0f3C7e9d1B8A4F6c2E50aA", "content_url": "", "tx_hash": "", "outreach_message": "", "verification_verdict": "", "verification_score": 0, "rejection_reason": "", "score_breakdown": {"engagement_authenticity": 27, "reputation_trust": 20, "audience_fit": 18, "content_quality": 14}, "key_strengths": ["Highest engagement rate in pool", "AI agent content specialist"], "key_risks": ["Newer account compared to tier 1", "Niche may be too narrow"]},
-        {"handle": "@crypto_educator", "followers": 175000, "engagement_rate": 4.9, "score": 76, "verdict": "approved", "tier": "tier_2", "payment_amount_usdc": 2000, "payment_status": "unpaid", "wallet_address": "0xA8c3E1d7B2f6490eC5b8D1a3F9e7C4b6d2A8F01E", "content_url": "", "tx_hash": "", "outreach_message": "", "verification_verdict": "", "verification_score": 0, "rejection_reason": "", "score_breakdown": {"engagement_authenticity": 20, "reputation_trust": 21, "audience_fit": 20, "content_quality": 15}, "key_strengths": ["Strong educational content approach", "Established trust with beginner audience"], "key_risks": ["Lower engagement rate", "Audience may be too beginner-focused"]},
-        {"handle": "@agent_maxi", "followers": 89000, "engagement_rate": 6.5, "score": 68, "verdict": "approved", "tier": "tier_3", "payment_amount_usdc": 1500, "payment_status": "unpaid", "wallet_address": "0x9cA1e3D7b2F8460dE5a8C1B4f6D9E3c7a2B1F04D", "content_url": "", "tx_hash": "", "outreach_message": "", "verification_verdict": "", "verification_score": 0, "rejection_reason": "", "score_breakdown": {"engagement_authenticity": 20, "reputation_trust": 18, "audience_fit": 17, "content_quality": 13}, "key_strengths": ["AI agent focused content", "Growing audience in target niche"], "key_risks": ["Smaller reach", "Account under 2 years"]},
-        {"handle": "@yield_hunter_ct", "followers": 98000, "engagement_rate": 5.6, "score": 65, "verdict": "approved", "tier": "tier_3", "payment_amount_usdc": 1000, "payment_status": "unpaid", "wallet_address": "0x5eB1d8C3a7F9420bE6c1D9A4f3B7E8c2d6A1F09B", "content_url": "", "tx_hash": "", "outreach_message": "", "verification_verdict": "", "verification_score": 0, "rejection_reason": "", "score_breakdown": {"engagement_authenticity": 18, "reputation_trust": 17, "audience_fit": 16, "content_quality": 14}, "key_strengths": ["Active DeFi community member", "Consistent posting schedule"], "key_risks": ["Borderline score", "Medium comment quality"]}
+        {"handle": "@based_builder", "followers": 187000, "engagement_rate": 8.4, "score": 92, "verdict": "approved", "tier": "tier_1", "payment_amount_usdc": 10000, "payment_status": "unpaid", "wallet_address": "0x4f2a8B3c91D7eF06A42b1C9dE5f8A3e71c2B09aD", "content_url": "", "tx_hash": "", "outreach_message": "", "verification_verdict": "", "verification_score": 0, "rejection_reason": "", "score_breakdown": {"engagement_authenticity": 28, "reputation_trust": 25, "audience_fit": 23, "content_quality": 16}, "key_strengths": ["Top-tier crypto ecosystem coverage", "Consistently high engagement with quality meme + alpha content"], "key_risks": ["Premium pricing", "May be overbooked with campaign requests"]},
+        {"handle": "@defi_maven", "followers": 224000, "engagement_rate": 7.9, "score": 85, "verdict": "approved", "tier": "tier_2", "payment_amount_usdc": 3500, "payment_status": "unpaid", "wallet_address": "0x7aE1c3D9f5B24680eA31d8C7bF09e4A62dF8c11B", "content_url": "", "tx_hash": "", "outreach_message": "", "verification_verdict": "", "verification_score": 0, "rejection_reason": "", "score_breakdown": {"engagement_authenticity": 26, "reputation_trust": 23, "audience_fit": 22, "content_quality": 14}, "key_strengths": ["Strong DeFi audience overlap with DOGE holders", "Transparent paid disclosure history"], "key_risks": ["High follower count may dilute meme targeting", "Competes with multiple brand deals"]},
+        {"handle": "@ai_agent_alpha", "followers": 156000, "engagement_rate": 9.1, "score": 80, "verdict": "approved", "tier": "tier_2", "payment_amount_usdc": 3000, "payment_status": "unpaid", "wallet_address": "0xB3d7F2a9c8E14D6b5A0f3C7e9d1B8A4F6c2E50aA", "content_url": "", "tx_hash": "", "outreach_message": "", "verification_verdict": "", "verification_score": 0, "rejection_reason": "", "score_breakdown": {"engagement_authenticity": 27, "reputation_trust": 20, "audience_fit": 19, "content_quality": 14}, "key_strengths": ["Highest engagement rate in pool", "Can bridge DOGE with AI agent narrative"], "key_risks": ["Newer account compared to tier 1", "AI niche may not fully overlap with meme community"]},
+        {"handle": "@crypto_educator", "followers": 175000, "engagement_rate": 4.9, "score": 77, "verdict": "approved", "tier": "tier_2", "payment_amount_usdc": 3500, "payment_status": "unpaid", "wallet_address": "0xA8c3E1d7B2f6490eC5b8D1a3F9e7C4b6d2A8F01E", "content_url": "", "tx_hash": "", "outreach_message": "", "verification_verdict": "", "verification_score": 0, "rejection_reason": "", "score_breakdown": {"engagement_authenticity": 20, "reputation_trust": 22, "audience_fit": 20, "content_quality": 15}, "key_strengths": ["Strong educational content — perfect for explaining DOGE utility", "Established trust with beginner audience"], "key_risks": ["Lower engagement rate", "Audience may need more meme energy"]},
+        {"handle": "@agent_maxi", "followers": 89000, "engagement_rate": 6.5, "score": 69, "verdict": "approved", "tier": "tier_3", "payment_amount_usdc": 3000, "payment_status": "unpaid", "wallet_address": "0x9cA1e3D7b2F8460dE5a8C1B4f6D9E3c7a2B1F04D", "content_url": "", "tx_hash": "", "outreach_message": "", "verification_verdict": "", "verification_score": 0, "rejection_reason": "", "score_breakdown": {"engagement_authenticity": 20, "reputation_trust": 18, "audience_fit": 18, "content_quality": 13}, "key_strengths": ["Strong meme game with substance", "Growing audience in crypto-native niche"], "key_risks": ["Smaller reach", "Account under 2 years"]},
+        {"handle": "@yield_hunter_ct", "followers": 98000, "engagement_rate": 5.6, "score": 66, "verdict": "approved", "tier": "tier_3", "payment_amount_usdc": 2000, "payment_status": "unpaid", "wallet_address": "0x5eB1d8C3a7F9420bE6c1D9A4f3B7E8c2d6A1F09B", "content_url": "", "tx_hash": "", "outreach_message": "", "verification_verdict": "", "verification_score": 0, "rejection_reason": "", "score_breakdown": {"engagement_authenticity": 18, "reputation_trust": 17, "audience_fit": 17, "content_quality": 14}, "key_strengths": ["Active DeFi community member", "Can cover DOGE yield opportunities on Dogechain"], "key_risks": ["Borderline score", "Medium comment quality"]}
     ],
     "rejected_kols": [
-        {"handle": "@pump_king", "score": 28, "verdict": "hard_rejected", "rejection_reason": "Confirmed rug promotion: SafeMoon2 (Dec 2024). Auto-rejected per campaign guardrails.", "tier": ""},
+        {"handle": "@pump_king", "score": 28, "verdict": "hard_rejected", "rejection_reason": "Confirmed rug promotion: SafeMoon2 (Dec 2024). Auto-rejected per campaign guardrails — cannot risk Dogecoin brand association.", "tier": ""},
         {"handle": "@shillmaster_9000", "score": 34, "verdict": "rejected", "rejection_reason": "89% fake engagement detected via comment analysis. Follower-to-engagement ratio indicates bot activity.", "tier": ""},
         {"handle": "@anon_trader_xyz", "score": 41, "verdict": "rejected", "rejection_reason": "Account age: 90 days (minimum requirement: 180 days). Insufficient track record for campaign inclusion.", "tier": ""}
     ],
     "proposal": {
-        "campaign_summary": "MoltX Protocol Agent Staking Launch campaign targeting the Base/AI/DeFi intersection with 6 vetted KOLs across 3 tiers. The roster balances anchor credibility (Tier 1) with specialized reach (Tier 2) and emerging voices (Tier 3) for maximum ecosystem coverage.",
+        "campaign_summary": "Dogecoin Community Growth campaign targeting meme culture, crypto traders, and DeFi users with 6 vetted KOLs across 3 tiers. The roster combines meme virality with educational depth to drive both awareness and real utility adoption. $25,000 USDC budget across 14 days.",
         "kol_roster": [
-            {"handle": "@based_builder", "tier": "tier_1", "role": "Anchor thread — deep dive on agent staking mechanics", "budget_usdc": 6000, "expected_reach": 850000},
-            {"handle": "@defi_maven", "tier": "tier_2", "role": "DeFi yield comparison — agent staking vs traditional", "budget_usdc": 2500, "expected_reach": 520000},
-            {"handle": "@ai_agent_alpha", "tier": "tier_2", "role": "AI agent ecosystem overview featuring MoltX", "budget_usdc": 2000, "expected_reach": 480000},
-            {"handle": "@crypto_educator", "tier": "tier_2", "role": "Beginner guide — how to stake with AI agents", "budget_usdc": 2000, "expected_reach": 400000},
-            {"handle": "@agent_maxi", "tier": "tier_3", "role": "Agent economy hot take — why staking changes everything", "budget_usdc": 1500, "expected_reach": 320000},
-            {"handle": "@yield_hunter_ct", "tier": "tier_3", "role": "Yield analysis — agent staking APY breakdown", "budget_usdc": 1000, "expected_reach": 230000}
+            {"handle": "@based_builder", "tier": "tier_1", "role": "Anchor thread — Dogecoin ecosystem deep dive: from memes to DeFi utility", "budget_usdc": 10000, "expected_reach": 950000},
+            {"handle": "@defi_maven", "tier": "tier_2", "role": "DeFi comparison — DOGE yield farming on Dogechain vs ETH L2s", "budget_usdc": 3500, "expected_reach": 560000},
+            {"handle": "@ai_agent_alpha", "tier": "tier_2", "role": "Thread: AI agents meet Dogecoin — the future of meme-powered automation", "budget_usdc": 3000, "expected_reach": 490000},
+            {"handle": "@crypto_educator", "tier": "tier_2", "role": "Beginner guide — How to use Dogecoin for payments and DeFi in 2026", "budget_usdc": 3500, "expected_reach": 430000},
+            {"handle": "@agent_maxi", "tier": "tier_3", "role": "Meme thread — Why Dogecoin outlasted every other meme coin", "budget_usdc": 3000, "expected_reach": 340000},
+            {"handle": "@yield_hunter_ct", "tier": "tier_3", "role": "Yield analysis — Dogechain staking and LP opportunities breakdown", "budget_usdc": 2000, "expected_reach": 250000}
         ],
         "timeline": [
-            {"day": 1, "action": "Campaign kickoff — lock $15,000 USDC in agent wallet"},
-            {"day": 2, "action": "Distribute briefs and content guidelines to all 6 KOLs"},
-            {"day": 3, "action": "Tier 1: @based_builder publishes anchor thread"},
+            {"day": 1, "action": "Campaign kickoff — lock $25,000 USDC in agent wallet"},
+            {"day": 2, "action": "Distribute briefs and Dogecoin brand guidelines to all 6 KOLs"},
+            {"day": 3, "action": "Tier 1: @based_builder publishes anchor Dogecoin ecosystem thread"},
             {"day": 5, "action": "Tier 2: @defi_maven, @ai_agent_alpha, @crypto_educator publish"},
-            {"day": 7, "action": "Mid-campaign check — verify engagement metrics and sentiment"},
+            {"day": 7, "action": "Mid-campaign check — verify engagement metrics and community sentiment"},
             {"day": 8, "action": "Tier 3: @agent_maxi, @yield_hunter_ct publish supporting content"},
             {"day": 10, "action": "Content verification window opens — AI reviews all deliverables"},
-            {"day": 12, "action": "Final payments released for verified content"},
-            {"day": 14, "action": "Campaign complete — generate performance report"}
+            {"day": 12, "action": "Final USDC payments released for verified content"},
+            {"day": 14, "action": "Campaign complete — generate performance report for Dogecoin Foundation"}
         ],
-        "total_expected_reach": 2800000,
-        "agent_recommendation": "This campaign has strong potential with a well-balanced KOL roster covering all three tiers. The Tier 1 placement with @based_builder provides anchor credibility in the Base ecosystem, while Tier 2 and 3 KOLs extend reach into DeFi and AI agent communities. I recommend proceeding — the budget allocation maximizes coverage while maintaining quality thresholds.",
+        "total_expected_reach": 3020000,
+        "agent_recommendation": "This is a strong roster for a Dogecoin community growth campaign. The Tier 1 placement with @based_builder provides credibility and deep ecosystem coverage, while Tier 2 KOLs bridge the meme-to-utility narrative effectively. @agent_maxi in Tier 3 brings authentic meme energy that resonates with the DOGE community. I recommend approving — the $25K budget is well-distributed across tiers for maximum virality and education.",
         "total_approved": 6,
         "total_rejected": 3
     },
     "activity_log": [
-        {"event_type": "proposal_done", "message": "✓ Proposal generated — ready for brand approval", "detail": "Expected reach: 2.8M · 6 KOLs · $15,000 budget", "timestamp": "2026-02-27T10:08:30Z"},
+        {"event_type": "proposal_done", "message": "✓ Proposal generated — ready for brand approval", "detail": "Expected reach: 3.0M · 6 KOLs · $25,000 budget", "timestamp": "2026-02-27T10:08:30Z"},
         {"event_type": "proposal_start", "message": "Generating campaign proposal...", "detail": "6 KOLs approved, 3 rejected", "timestamp": "2026-02-27T10:08:12Z"},
-        {"event_type": "kol_approved", "message": "✓ @yield_hunter_ct approved", "detail": "Score: 65/100 — Tier 3", "timestamp": "2026-02-27T10:07:45Z"},
-        {"event_type": "kol_approved", "message": "✓ @agent_maxi approved", "detail": "Score: 68/100 — Tier 3", "timestamp": "2026-02-27T10:07:20Z"},
+        {"event_type": "kol_approved", "message": "✓ @yield_hunter_ct approved", "detail": "Score: 66/100 — Tier 3", "timestamp": "2026-02-27T10:07:45Z"},
+        {"event_type": "kol_approved", "message": "✓ @agent_maxi approved", "detail": "Score: 69/100 — Tier 3", "timestamp": "2026-02-27T10:07:20Z"},
         {"event_type": "kol_rejected", "message": "✗ @anon_trader_xyz rejected", "detail": "Account age: 90 days (minimum: 180)", "timestamp": "2026-02-27T10:06:55Z"},
         {"event_type": "kol_rejected", "message": "✗ @shillmaster_9000 rejected", "detail": "89% fake engagement detected", "timestamp": "2026-02-27T10:06:30Z"},
         {"event_type": "kol_rejected", "message": "✗ @pump_king hard rejected", "detail": "Confirmed rug promotion: SafeMoon2", "timestamp": "2026-02-27T10:06:05Z"},
-        {"event_type": "kol_approved", "message": "✓ @crypto_educator approved", "detail": "Score: 76/100 — Tier 2", "timestamp": "2026-02-27T10:05:40Z"},
-        {"event_type": "kol_approved", "message": "✓ @ai_agent_alpha approved", "detail": "Score: 79/100 — Tier 2", "timestamp": "2026-02-27T10:05:15Z"},
-        {"event_type": "kol_approved", "message": "✓ @defi_maven approved", "detail": "Score: 84/100 — Tier 2", "timestamp": "2026-02-27T10:04:50Z"},
-        {"event_type": "kol_approved", "message": "✓ @based_builder approved", "detail": "Score: 91/100 — Tier 1", "timestamp": "2026-02-27T10:04:25Z"},
+        {"event_type": "kol_approved", "message": "✓ @crypto_educator approved", "detail": "Score: 77/100 — Tier 2", "timestamp": "2026-02-27T10:05:40Z"},
+        {"event_type": "kol_approved", "message": "✓ @ai_agent_alpha approved", "detail": "Score: 80/100 — Tier 2", "timestamp": "2026-02-27T10:05:15Z"},
+        {"event_type": "kol_approved", "message": "✓ @defi_maven approved", "detail": "Score: 85/100 — Tier 2", "timestamp": "2026-02-27T10:04:50Z"},
+        {"event_type": "kol_approved", "message": "✓ @based_builder approved", "detail": "Score: 92/100 — Tier 1", "timestamp": "2026-02-27T10:04:25Z"},
         {"event_type": "vetting_start", "message": "Vetting 20 candidates with AI scoring engine...", "detail": "4 categories: engagement, reputation, audience fit, content quality", "timestamp": "2026-02-27T10:04:00Z"},
         {"event_type": "discovery_done", "message": "20 candidates found via Influur", "detail": "Passing to vetting engine", "timestamp": "2026-02-27T10:03:30Z"},
-        {"event_type": "discovery_start", "message": "Querying Influur database...", "detail": "Mode: web3 · Categories: Base, AI, DeFi", "timestamp": "2026-02-27T10:02:00Z"},
-        {"event_type": "profile_done", "message": "✓ Campaign Intelligence Profile generated", "detail": "Targeting: Base, AI Agents, DeFi", "timestamp": "2026-02-27T10:01:30Z"},
-        {"event_type": "campaign_created", "message": "Campaign created — MoltX Protocol Product Launch", "detail": "$15,000 USDC · 14 days · Web3 mode", "timestamp": "2026-02-27T10:00:00Z"}
+        {"event_type": "discovery_start", "message": "Querying Influur database...", "detail": "Mode: web3 · Categories: Meme, DeFi, Trading", "timestamp": "2026-02-27T10:02:00Z"},
+        {"event_type": "profile_done", "message": "✓ Campaign Intelligence Profile generated", "detail": "Targeting: Dogecoin, Meme Coins, DeFi", "timestamp": "2026-02-27T10:01:30Z"},
+        {"event_type": "campaign_created", "message": "Campaign created — Dogecoin Community Growth", "detail": "$25,000 USDC · 14 days · Web3 mode", "timestamp": "2026-02-27T10:00:00Z"}
     ]
 };
 
@@ -160,7 +160,7 @@ glob DEMO_WEB2_CAMPAIGN: dict = {
 """Return both demo campaigns as a dict keyed by campaign id."""
 def:pub get_demo_campaigns() -> dict {
     return {
-        "demo-moltx-001": DEMO_WEB3_CAMPAIGN,
+        "demo-doge-001": DEMO_WEB3_CAMPAIGN,
         "demo-saas-001": DEMO_WEB2_CAMPAIGN
     };
 }
