@@ -12,6 +12,7 @@ def:pub Dashboard(on_logout: any, on_load_demo: any, on_launch: any) -> JsxEleme
     has form_min_score: str = "65";
     has form_mode: str = "web3";
     has form_audience: list = ["Base Ecosystem", "DeFi Users", "AI Enthusiasts"];
+    has is_launching: bool = False;
 
     # ── pre-compute mode toggle styles ──
     web3_btn_bg = "transparent";
@@ -164,6 +165,16 @@ def:pub Dashboard(on_logout: any, on_load_demo: any, on_launch: any) -> JsxEleme
                 }}
             >{ptag}</div>
         );
+    }
+
+    # ── pre-compute launch button state ──
+    launch_btn_text = "🚀 Launch Campaign →";
+    launch_btn_cursor = "pointer";
+    launch_btn_opacity = "1";
+    if (is_launching) {
+        launch_btn_text = "🚀 Launching...";
+        launch_btn_cursor = "not-allowed";
+        launch_btn_opacity = "0.6";
     }
 
     return <div className="cm-root">
@@ -903,19 +914,26 @@ def:pub Dashboard(on_logout: any, on_load_demo: any, on_launch: any) -> JsxEleme
                         </div>
                         <div className="form-footer">
                             <div className="form-note">Agent will discover & vet KOLs via Influur</div>
-                            <button className="btn-primary" onClick={lambda -> None {
-                                on_launch({
-                                    "brand_name": form_brand,
-                                    "goal": form_goal,
-                                    "budget_usdc": float(form_budget),
-                                    "timeline_days": int(form_timeline),
-                                    "target_audience": form_audience,
-                                    "content_type": form_content_type,
-                                    "campaign_brief": form_brief,
-                                    "min_kol_score": int(form_min_score),
-                                    "mode": form_mode
-                                });
-                            }}>🚀 Launch Campaign →</button>
+                            <button
+                                className="btn-primary"
+                                style={{"cursor": launch_btn_cursor, "opacity": launch_btn_opacity}}
+                                onClick={lambda -> None {
+                                    if (not is_launching) {
+                                        is_launching = True;
+                                        on_launch({
+                                            "brand_name": form_brand,
+                                            "goal": form_goal,
+                                            "budget_usdc": form_budget,
+                                            "timeline_days": form_timeline,
+                                            "target_audience": form_audience,
+                                            "content_type": form_content_type,
+                                            "campaign_brief": form_brief,
+                                            "min_kol_score": form_min_score,
+                                            "mode": form_mode
+                                        });
+                                    }
+                                }}
+                            >{launch_btn_text}</button>
                         </div>
                     </div>
                     <div className="activity-card fade-in">

@@ -90,6 +90,17 @@ def _make_ts() -> str {
     return "2026-02-27T" + h + ":" + m + ":" + s + "Z";
 }
 
+# #region agent log
+import json as _dj;
+import time as _dt;
+import traceback as _dtb;
+def _dl(loc: str, msg: str, data: dict = {}) {
+    _ff = open("/Users/federicodefaveri-sei/Developer/hackathons/velric_hackathon/jaseci_test/ai-agent-hackathon/.cursor/debug.log", "a");
+    _ff.write(_dj.dumps({"location": loc, "message": msg, "data": data, "timestamp": _dt.time()}) + "\n");
+    _ff.close();
+}
+# #endregion
+
 # ───────────────────────────────────────────
 # Server Logic — Full Campaign Pipeline
 # ───────────────────────────────────────────
@@ -154,19 +165,23 @@ sv {
         }
     }
 
-    # ——— Create new campaign ———
-    def:pub create_campaign(
-        brand_name: str,
-        goal: str,
-        budget_usdc: float,
-        timeline_days: int,
-        target_audience: list,
-        content_type: list,
-        campaign_brief: str,
-        min_kol_score: int = 65,
-        mode: str = "web3"
-    ) -> dict {
+    # ——— Create new campaign (single-dict param for reliable cl→sv serialization) ———
+    def:pub create_campaign(data: dict) -> str {
+        # #region agent log
+        _dl("sv:create_campaign:entry", "create_campaign called", {"data_type": str(type(data))});
+        # #endregion
         _ensure_demos();
+
+        brand_name = str(data.get("brand_name", ""));
+        goal = str(data.get("goal", ""));
+        budget_usdc = float(data.get("budget_usdc", 0));
+        timeline_days = int(data.get("timeline_days", 14));
+        target_audience = data.get("target_audience", []);
+        content_type = data.get("content_type", []);
+        campaign_brief = str(data.get("campaign_brief", ""));
+        min_kol_score = int(data.get("min_kol_score", 65));
+        mode = str(data.get("mode", "web3"));
+
         cid = "camp-" + str(random.randint(10000, 99999));
         campaigns[cid] = {
             "id": cid,
@@ -190,83 +205,150 @@ sv {
         _add_log(cid, "campaign_created",
             "Campaign created — " + brand_name + " " + goal,
             "$" + str(budget_usdc) + " · " + str(timeline_days) + " days · " + mode + " mode");
-        return {"campaign_id": cid, "status": "onboarding"};
+        # #region agent log
+        _dl("sv:create_campaign:return", "Returning campaign_id", {"cid": cid});
+        # #endregion
+        return cid;
     }
 
     # ——— Run full pipeline (called after create) ———
     def:pub run_pipeline(cid: str) -> dict {
-        _ensure_demos();
-        if (not campaigns.get(cid)) {
-            return {"error": "Campaign not found"};
+        # #region agent log
+        _dl("sv:run_pipeline:entry", "run_pipeline called", {"cid": cid});
+        # #endregion
+        try {
+            _ensure_demos();
+            if (not campaigns.get(cid)) {
+                # #region agent log
+                _dl("sv:run_pipeline:not_found", "campaign not found", {"cid": cid});
+                # #endregion
+                return {"error": "Campaign not found"};
+            }
+            c = campaigns[cid];
+            mode = c.get("mode", "web3");
+
+            # Stage 1: Intelligence Profile
+            # #region agent log
+            _dl("sv:run_pipeline:stage1_start", "Starting intelligence profile", {"cid": cid});
+            # #endregion
+            c["status"] = "onboarding";
+            _add_log(cid, "profile_start", "Building Campaign Intelligence Profile...", "Analyzing brand goals and audience");
+
+            intake = {
+                "brand_name": c["brand_name"],
+                "goal": c["goal"],
+                "budget_usdc": c["budget_usdc"],
+                "timeline_days": c["timeline_days"],
+                "target_audience": c["target_audience"],
+                "content_type": c["content_type"],
+                "campaign_brief": c["campaign_brief"],
+                "min_kol_score": c["min_kol_score"]
+            };
+            profile = build_intelligence_profile(intake);
+            c["intelligence_profile"] = profile;
+            eco = str(profile.get("ecosystem_focus", ["General"]));
+            _add_log(cid, "profile_done", "✓ Intelligence profile ready", "Targeting: " + eco);
+            # #region agent log
+            _dl("sv:run_pipeline:stage1_done", "Intelligence profile done", {"eco": eco});
+            # #endregion
+
+            # Stage 2: Discovery
+            # #region agent log
+            _dl("sv:run_pipeline:stage2_start", "Starting discovery", {"mode": mode});
+            # #endregion
+            c["status"] = "discovering";
+            _add_log(cid, "discovery_start", "Querying Influur database...", "Mode: " + mode);
+            candidates = get_candidates(mode=mode);
+            _add_log(cid, "discovery_done", str(len(candidates)) + " candidates found", "Passing to vetting engine");
+            # #region agent log
+            _dl("sv:run_pipeline:stage2_done", "Discovery done", {"num_candidates": len(candidates)});
+            # #endregion
+
+            # Stage 3: Vetting
+            # #region agent log
+            _dl("sv:run_pipeline:stage3_start", "Starting vetting", {"num_candidates": len(candidates)});
+            # #endregion
+            c["status"] = "vetting";
+            approved: list = [];
+            rejected: list = [];
+            vet_idx = 0;
+            for kol in candidates {
+                # #region agent log
+                _dl("sv:run_pipeline:vet_kol", "Vetting KOL " + str(vet_idx), {"handle": kol.get("handle", "?")});
+                # #endregion
+                result = vet_kol(kol, profile);
+                # #region agent log
+                _dl("sv:run_pipeline:vet_kol_done", "KOL vetted " + str(vet_idx), {"verdict": result.get("verdict", "?")});
+                # #endregion
+                # Manual dict merge (no spread syntax in Jac)
+                kol_copy: dict = {};
+                for k in kol {
+                    kol_copy[k] = kol[k];
+                }
+                for k in result {
+                    kol_copy[k] = result[k];
+                }
+                if (result.get("verdict") == "approved") {
+                    approved.append(kol_copy);
+                    _add_log(cid, "kol_approved",
+                        "✓ " + str(kol["handle"]) + " approved",
+                        "Score: " + str(result.get("score", 0)) + "/100 — " + str(result.get("tier", "N/A")));
+                } else {
+                    rejected.append(kol_copy);
+                    _add_log(cid, "kol_rejected",
+                        "✗ " + str(kol["handle"]) + " rejected",
+                        str(result.get("rejection_reason", "Below threshold")));
+                }
+                vet_idx = vet_idx + 1;
+            }
+            c["approved_kols"] = approved;
+            c["rejected_kols"] = rejected;
+            # #region agent log
+            _dl("sv:run_pipeline:stage3_done", "Vetting done", {"approved": len(approved), "rejected": len(rejected)});
+            # #endregion
+
+            # Stage 4: Proposal
+            # #region agent log
+            _dl("sv:run_pipeline:stage4_start", "Starting proposal generation", {});
+            # #endregion
+            c["status"] = "building_proposal";
+            _add_log(cid, "proposal_start", "Generating campaign proposal...",
+                str(len(approved)) + " approved, " + str(len(rejected)) + " rejected");
+            proposal = build_proposal(approved, c);
+            c["proposal"] = proposal;
+            # #region agent log
+            _dl("sv:run_pipeline:stage4_done", "Proposal built", {"has_roster": "kol_roster" in proposal});
+            # #endregion
+
+            # Sync budget allocation from proposal kol_roster back to approved_kols
+            roster = proposal.get("kol_roster", []);
+            for roster_entry in roster {
+                r_handle = roster_entry.get("handle", "");
+                r_budget = roster_entry.get("budget_usdc", 0);
+                for ak in approved {
+                    ak_handle = ak.get("handle", "");
+                    if (ak_handle == r_handle) {
+                        ak["payment_amount_usdc"] = r_budget;
+                        ak["payment_status"] = "unpaid";
+                        break;
+                    }
+                }
+            }
+
+            c["status"] = "proposal_ready";
+            _add_log(cid, "proposal_done", "✓ Proposal ready for approval",
+                "Expected reach: " + str(proposal.get("total_expected_reach", "N/A")));
+
+            # #region agent log
+            _dl("sv:run_pipeline:complete", "Pipeline DONE", {"status": "proposal_ready"});
+            # #endregion
+            return {"status": "proposal_ready", "approved": len(approved), "rejected": len(rejected)};
+        } except Exception as e {
+            # #region agent log
+            _dl("sv:run_pipeline:EXCEPTION", "Pipeline crashed", {"error": str(e), "tb": _dtb.format_exc()});
+            # #endregion
+            return {"error": str(e)};
         }
-        c = campaigns[cid];
-        mode = c.get("mode", "web3");
-
-        # Stage 1: Intelligence Profile
-        c["status"] = "onboarding";
-        _add_log(cid, "profile_start", "Building Campaign Intelligence Profile...", "Analyzing brand goals and audience");
-
-        intake = {
-            "brand_name": c["brand_name"],
-            "goal": c["goal"],
-            "budget_usdc": c["budget_usdc"],
-            "timeline_days": c["timeline_days"],
-            "target_audience": c["target_audience"],
-            "content_type": c["content_type"],
-            "campaign_brief": c["campaign_brief"],
-            "min_kol_score": c["min_kol_score"]
-        };
-        profile = build_intelligence_profile(intake);
-        c["intelligence_profile"] = profile;
-        eco = str(profile.get("ecosystem_focus", ["General"]));
-        _add_log(cid, "profile_done", "✓ Intelligence profile ready", "Targeting: " + eco);
-
-        # Stage 2: Discovery
-        c["status"] = "discovering";
-        _add_log(cid, "discovery_start", "Querying Influur database...", "Mode: " + mode);
-        candidates = get_candidates(mode=mode);
-        _add_log(cid, "discovery_done", str(len(candidates)) + " candidates found", "Passing to vetting engine");
-
-        # Stage 3: Vetting
-        c["status"] = "vetting";
-        approved: list = [];
-        rejected: list = [];
-        for kol in candidates {
-            result = vet_kol(kol, profile);
-            # Manual dict merge (no spread syntax in Jac)
-            kol_copy: dict = {};
-            for k in kol {
-                kol_copy[k] = kol[k];
-            }
-            for k in result {
-                kol_copy[k] = result[k];
-            }
-            if (result.get("verdict") == "approved") {
-                approved.append(kol_copy);
-                _add_log(cid, "kol_approved",
-                    "✓ " + str(kol["handle"]) + " approved",
-                    "Score: " + str(result.get("score", 0)) + "/100 — " + str(result.get("tier", "N/A")));
-            } else {
-                rejected.append(kol_copy);
-                _add_log(cid, "kol_rejected",
-                    "✗ " + str(kol["handle"]) + " rejected",
-                    str(result.get("rejection_reason", "Below threshold")));
-            }
-        }
-        c["approved_kols"] = approved;
-        c["rejected_kols"] = rejected;
-
-        # Stage 4: Proposal
-        c["status"] = "building_proposal";
-        _add_log(cid, "proposal_start", "Generating campaign proposal...",
-            str(len(approved)) + " approved, " + str(len(rejected)) + " rejected");
-        proposal = build_proposal(approved, c);
-        c["proposal"] = proposal;
-        c["status"] = "proposal_ready";
-        _add_log(cid, "proposal_done", "✓ Proposal ready for approval",
-            "Expected reach: " + str(proposal.get("total_expected_reach", "N/A")));
-
-        return {"status": "proposal_ready", "approved": len(approved), "rejected": len(rejected)};
     }
 
     # ——— Approve campaign ———
@@ -398,6 +480,7 @@ cl {
         has current_campaign: dict = {};
         has activity_log: list = [];
         has campaign_mode: str = "web3";
+        has is_launching: bool = False;
 
         # ——— Auth helpers ———
 
@@ -456,29 +539,25 @@ cl {
         async def launch_campaign(form_data: dict) -> None {
             fd_mode = form_data["mode"] or "web3";
             fd_min = form_data["min_kol_score"] or 65;
-            result = await create_campaign(
-                brand_name=form_data["brand_name"],
-                goal=form_data["goal"],
-                budget_usdc=form_data["budget_usdc"],
-                timeline_days=form_data["timeline_days"],
-                target_audience=form_data["target_audience"],
-                content_type=form_data["content_type"],
-                campaign_brief=form_data["campaign_brief"],
-                min_kol_score=fd_min,
-                mode=fd_mode
-            );
-            current_campaign_id = result["campaign_id"];
+
+            # Show loading state immediately
+            is_launching = True;
+
+            # Create server-side campaign (returns campaign ID string)
+            current_campaign_id = await create_campaign(form_data);
             campaign_mode = fd_mode;
-            current_view = "running";
-            # Start pipeline
+
+            # Run the full pipeline (blocks but that's OK — we show loading spinner)
             await run_pipeline(current_campaign_id);
-            # Refresh campaign data
+
+            # Fetch completed campaign
             current_campaign = await get_campaign(current_campaign_id);
             activity_log = current_campaign["activity_log"] or [];
-            # Auto-advance to proposal if ready
-            if (current_campaign["status"] == "proposal_ready") {
-                current_view = "proposal";
-            }
+
+            is_launching = False;
+
+            # Go straight to proposal
+            current_view = "proposal";
         }
 
         async def handle_approve() -> None {
@@ -518,7 +597,7 @@ cl {
                 "color": "#E8EDF2"
             }}>
                 <p>Loading CampaignMind...</p>
-            </div>;
+        </div>;
         }
 
         if (not is_authed) {
@@ -567,6 +646,50 @@ cl {
                 on_verify={handle_verify}
                 on_pay={handle_pay}
             />;
+        }
+
+        if (is_launching) {
+            return <div style={{
+                "minHeight": "100vh",
+                "background": "#080C10",
+                "color": "#E8EDF2",
+                "fontFamily": "'Syne', Arial, sans-serif",
+                "display": "flex",
+                "flexDirection": "column",
+                "alignItems": "center",
+                "justifyContent": "center"
+            }}>
+                <style>{"""
+                    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+                    @keyframes pulse2 { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+                """}</style>
+                <div style={{
+                    "width": "64px",
+                    "height": "64px",
+                    "border": "3px solid rgba(0,229,160,0.2)",
+                    "borderTop": "3px solid #00E5A0",
+                    "borderRadius": "50%",
+                    "animation": "spin 1s linear infinite",
+                    "marginBottom": "24px"
+                }}></div>
+                <h2 style={{
+                    "fontSize": "22px",
+                    "fontWeight": "800",
+                    "letterSpacing": "-0.5px",
+                    "marginBottom": "8px"
+                }}>🤖 Agent Working...</h2>
+                <p style={{
+                    "fontSize": "14px",
+                    "color": "#5A6A7A",
+                    "marginBottom": "4px"
+                }}>Running the full campaign pipeline</p>
+                <p style={{
+                    "fontSize": "12px",
+                    "color": "#5A6A7A",
+                    "fontFamily": "'DM Mono', monospace",
+                    "animation": "pulse2 2s infinite"
+                }}>Profiling → Discovery → Vetting → Proposal</p>
+            </div>;
         }
 
         # Default: Dashboard

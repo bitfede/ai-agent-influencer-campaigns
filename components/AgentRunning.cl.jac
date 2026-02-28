@@ -61,18 +61,34 @@ def:pub AgentRunning(
     # Status badge
     status_text = "Running...";
     status_color = "#00E5A0";
+    show_proposal_btn = False;
     if (status == "proposal_ready") {
         status_text = "Proposal Ready!";
         status_color = "#00E5A0";
+        show_proposal_btn = True;
     } elif (status == "vetting") {
         status_text = "Vetting KOLs...";
         status_color = "#0066FF";
     } elif (status == "discovering") {
         status_text = "Discovering KOLs...";
         status_color = "#0066FF";
-    } elif (status == "onboarding") {
+    } elif (status == "onboarding" or status == "building_proposal") {
         status_text = "Building Profile...";
         status_color = "#FFB800";
+    }
+
+    # Pre-compute proposal button styles
+    proposal_btn_cursor = "not-allowed";
+    proposal_btn_bg = "rgba(0,229,160,0.15)";
+    proposal_btn_color = "#5A6A7A";
+    proposal_btn_opacity = "0.5";
+    proposal_btn_text = "⏳ Pipeline running...";
+    if (show_proposal_btn) {
+        proposal_btn_cursor = "pointer";
+        proposal_btn_bg = "#00E5A0";
+        proposal_btn_color = "#000";
+        proposal_btn_opacity = "1";
+        proposal_btn_text = "View Proposal →";
     }
 
     return <div style={{
@@ -170,14 +186,15 @@ def:pub AgentRunning(
                         "fontSize": "13px",
                         "fontWeight": "700",
                         "fontFamily": "'Syne', sans-serif",
-                        "cursor": "pointer",
-                        "background": "#00E5A0",
-                        "color": "#000",
+                        "cursor": proposal_btn_cursor,
+                        "background": proposal_btn_bg,
+                        "color": proposal_btn_color,
                         "border": "none",
-                        "transition": "all 0.2s"
+                        "transition": "all 0.2s",
+                        "opacity": proposal_btn_opacity
                     }}
                     onClick={on_proposal_ready}
-                >View Proposal →</button>
+                >{proposal_btn_text}</button>
             </div>
         </div>
     </div>;

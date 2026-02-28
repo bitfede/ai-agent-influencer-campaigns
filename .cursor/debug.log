@@ -1,3 +1,8 @@
-{"location":"main.jac:app:entry","message":"layout-debug","hypothesisId":"H1-H5","runId":"run1","timestamp":1772233201740,"data":{"bodyMargin":"8px","bodyPadding":"0px","topbarHeight":116,"topbarBottom":124.296875,"topbarPadding":"20px 36px","contentTop":124.296875,"h1Margin":"13.4px 0px","pMargin":"2px 0px 12px"}}
-{"location":"main.jac:app:entry","message":"layout-debug","hypothesisId":"H1-H5","runId":"run1","timestamp":1772233219558,"data":{"bodyMargin":"0px","bodyPadding":"0px","topbarHeight":84,"topbarBottom":83.5,"topbarPadding":"20px 36px","contentTop":83.5,"h1Margin":"0px","pMargin":"2px 0px 0px"}}
-{"location":"main.jac:app:entry","message":"layout-debug","hypothesisId":"H1-H5","runId":"run1","timestamp":1772233359701,"data":{"bodyMargin":"0px","bodyPadding":"0px","topbarHeight":84,"topbarBottom":-417.5,"topbarPadding":"20px 36px","contentTop":-417.5,"h1Margin":"0px","pMargin":"2px 0px 0px"}}
+{"location": "sv:create_campaign:entry", "message": "create_campaign called", "data": {"data_type": "<class 'dict'>"}, "timestamp": 1772237409.168136}
+{"location": "sv:create_campaign:return", "message": "Returning campaign_id", "data": {"cid": "camp-66674"}, "timestamp": 1772237409.168763}
+{"location": "sv:run_pipeline:entry", "message": "run_pipeline called", "data": {"cid": ""}, "timestamp": 1772237409.180064}
+{"location": "sv:run_pipeline:not_found", "message": "campaign not found", "data": {"cid": ""}, "timestamp": 1772237409.180234}
+{"location": "sv:create_campaign:entry", "message": "create_campaign called", "data": {"data_type": "<class 'dict'>"}, "timestamp": 1772237439.791921}
+{"location": "sv:create_campaign:return", "message": "Returning campaign_id", "data": {"cid": "camp-78776"}, "timestamp": 1772237439.792732}
+{"location": "sv:run_pipeline:entry", "message": "run_pipeline called", "data": {"cid": ""}, "timestamp": 1772237439.799923}
+{"location": "sv:run_pipeline:not_found", "message": "campaign not found", "data": {"cid": ""}, "timestamp": 1772237439.800077}
